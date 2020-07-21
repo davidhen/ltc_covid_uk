@@ -1,0 +1,136 @@
+---
+title: "UK comparison"
+author: "David Henderson"
+date: "13/07/2020"
+output: 
+  html_document:
+    theme: journal
+    highlight: haddock
+    df_print: paged
+    code_folding: hide
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      fig.width = 12, fig.height = 9,
+                      warning = FALSE, message = FALSE)
+```
+
+# Introduction
+
+Code to produce figures with the report COVID-19 mortality and long term care: a UK comparison
+
+## Packages
+
+R packages required.....
+
+```{r}
+library(tidyverse)
+library(curl)
+library(readxl)
+library(lubridate)
+library(forcats)
+library(patchwork)
+library(ggthemes)
+
+#Helper function
+`%nin%` <- negate(`%in%`)
+
+#Short cut for csv output with html tables
+my_datatable <- function(x){
+  DT::datatable(x, extensions = "Buttons", options = list(dom = "Bfrtip", 
+                                                          buttons = c("csv")))
+}
+
+#Baseline plot settings
+theme_set(theme_minimal(base_family = "Roboto", base_size = 20) +
+            theme(panel.grid.minor = element_blank(),
+                  axis.title.y = element_text(margin = margin(0, 20, 0, 0)),
+                  axis.title.x = element_text(margin = margin(20, 0, 0, 0)),
+                  plot.caption = element_text(colour = "#AAAAAA"),
+                  plot.margin = margin(3,15,3,3,"mm")))
+
+#global options for scientific numbers and significant digits.          
+options(scipen = 10,
+        digits = 1)
+```
+
+
+## Data
+
+```{r, message=FALSE, warning=FALSE}
+#Assign url and download into a temp file
+url <- "https://www.ons.gov.uk/file?uri=%2fpeoplepopulationandcommunity%2fbirthsdeathsandmarriages%2fdeaths%2fdatasets%2fweeklyprovisionalfiguresondeathsregisteredinenglandandwales%2f2020/publishedweek282020.xlsx"
+temp <- tempfile()
+temp <- curl_download(url=url, destfile=temp, quiet=FALSE)
+
+
+#Extract weekly data for each country from "UK" Worksheet and tidy up
+uk_deaths_data <-
+  read_xlsx(temp, sheet="UK - Covid-19 - Weekly reg", 
+                         range = "A4:AB12") %>% 
+  slice(5:8) %>% 
+  select(-`Week number`) %>% 
+  rename(country = `...2`) %>% 
+  pivot_longer(`1`:`26`, names_to = "week_number", 
+               values_to = "covid_deaths") %>% 
+  mutate(week_number = as.integer(week_number)) %>% 
+  filter(week_number >= 11) %>% 
+  mutate(country = factor(country, 
+                          levels = c("England", "Scotland", 
+                          "Wales", "Northern Ireland")),
+         pop = case_when(
+           country == "England" ~ 56286961,
+           country == "Wales" ~ 3152879,
+           country == "Scotland" ~ 5463300,
+           country == "Northern Ireland" ~ 1893667),
+    deaths_100000 = covid_deaths/pop * 100000)
+
+uk_deaths_data
+```
+
+
+# Figure 1 Overall deaths
+
+```{r}
+uk_deaths_data %>% 
+  group_by(week_number) %>% 
+  summarise(tot_deaths = sum(covid_deaths)) %>% 
+  ggplot(aes(week_number, tot_deaths)) +
+  geom_line(colour = economist_pal()(1)) +
+  scale_x_continuous(breaks = scales::pretty_breaks(n = 12)) +
+  scale_y_continuous(breaks = scales::pretty_breaks(),
+                     limits = c(0, 10000)) +
+  labs(x = "Week number",
+       y = "") -> fig_1
+fig_1
+```
+
+```{r, echo=FALSE, eval=FALSE}
+ggsave("plots/fig_1.png", fig_1, width = 12, height = 9, dpi = 300)
+```
+
+
+# Figure 2
+
+```{r}
+uk_deaths_data %>% 
+  ggplot(aes(week_number, deaths_100000, colour = country)) +
+  geom_line(size = 1.2) +
+  scale_colour_wsj() +
+  scale_x_continuous(breaks = scales::pretty_breaks(n = 12)) +
+  scale_y_continuous(breaks = scales::pretty_breaks()) +
+  theme(legend.position = "top") +
+  labs(x = "Week number",
+       y = "", 
+       colour = "") -> fig_2
+fig_2
+```
+
+```{r, echo=FALSE, eval=FALSE}
+ggsave("plots/fig_2.png", fig_2, width = 12, height = 9, dpi = 300)
+```
+
+
