@@ -147,7 +147,7 @@ Data created in "care_inspectorate_wrangle.Rmd" file
 uk <- feather::read_feather("derived_data/uk.feather")
 ```
 
-## Plot
+## Plot all care homes
 
 
 ```{r}
@@ -170,3 +170,27 @@ ggsave("plots/fig_3.png", fig_3, width = 12, height = 9, dpi = 300)
 ```
 
 
+# Figure 4 
+
+Plot older people only
+
+```{r}
+uk %>% 
+  filter(country != "Northern Ireland") %>% 
+  filter(`Service user band - Older People` == "Y" | Subtype == "Older People") %>% 
+  ggplot(aes(fct_rev(country), `Care homes beds`)) +
+  geom_violin(alpha = 0.5, colour = "grey") +
+  geom_boxplot(width = 0.2, aes(colour = country)) +
+  scale_fill_wsj() +
+  theme(legend.position = "none",
+        plot.caption = element_text(size = 12)) +
+  coord_flip() +
+  labs(x = "",
+       y = "Number of care home beds",
+       caption = "Outer line indicates distribution\nStrong vertical line in box indicates the median\nBox limits indicate 25th and 75th percentile\nDots indicate statistical outliers") -> fig_4
+fig_4
+```
+
+```{r, echo=FALSE, eval=FALSE}
+ggsave("plots/fig_4.png", fig_4, width = 12, height = 9, dpi = 300)
+```

@@ -57,7 +57,7 @@ ni <- read_xlsx("raw_data/NI_care_homes.xlsx")
 eng %<>% 
   filter(`Care home?` == "Y" & 
            `Location Inspection Directorate` == "Adult social care") %>% 
-  select(`Location Name`, `Care homes beds`)  %>% 
+  select(`Location Name`, `Care homes beds`, `Service user band - Older People`)  %>% 
   mutate(country = "England")
 eng
 ```
@@ -68,7 +68,7 @@ scot %<>%
            Subtype %nin% c("Children & Young People" ) &
            ServiceStatus == "Active") %>% 
   select(`Location Name` = ServiceName, 
-         `Care homes beds` = TotalBeds) %>% 
+         `Care homes beds` = TotalBeds, Subtype) %>% 
   mutate(country = "Scotland")
 scot
 ```
@@ -77,7 +77,8 @@ scot
 ni %<>% 
   filter(Category %in% c("Nursing (NH)", "Residential (RC)")) %>% 
   select(`Location Name` = ServiceName,
-         `Care homes beds` = `Max Approved Places`) %>% 
+         `Care homes beds` = `Max Approved Places`,
+         `Categories of Care`) %>% 
   mutate(country = "Northern Ireland")
 ni
 ```
@@ -86,6 +87,7 @@ ni
 uk <- bind_rows(eng, scot, ni) %>% 
   mutate(country = factor(country,
                           levels = c("England", "Scotland", "Northern Ireland")))
+uk
 ```
 
 ```{r}
