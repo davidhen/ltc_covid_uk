@@ -137,49 +137,17 @@ ggsave("plots/fig_2.png", fig_2, width = 12, height = 9, dpi = 300)
 ```
 
 
-# Care Home size
 
+# Figure 3
 
-```{r}
-eng <- read_xlsx("data/ENGLAND_care_homes.xlsx", sheet = "HSCA Active Locations")
-scot <- read_xlsx("data/SCOTLAND_care_homes.xlsx", sheet = "MDSF_data_31 May 2020")
-ni <- read_xlsx("data/NI_care_homes.xlsx")
-```
+## Load in data
+Data created in "care_inspectorate_wrangle.Rmd" file
 
 ```{r}
-eng %<>% 
-  filter(`Care home?` == "Y" & 
-           `Location Inspection Directorate` == "Adult social care") %>% 
-  select(`Location Name`, `Care homes beds`)  %>% 
-  mutate(country = "England")
-eng
+uk <- feather::read_feather("derived_data/uk.feather")
 ```
 
-```{r}
-scot %<>% 
-  filter(CareService == "Care Home Service" & 
-           Subtype %nin% c("Children & Young People" ) &
-           ServiceStatus == "Active") %>% 
-  select(`Location Name` = ServiceName, 
-         `Care homes beds` = TotalBeds) %>% 
-  mutate(country = "Scotland")
-scot
-```
-
-```{r}
-ni %<>% 
-  filter(Category %in% c("Nursing (NH)", "Residential (RC)")) %>% 
-  select(`Location Name` = ServiceName,
-         `Care homes beds` = `Max Approved Places`) %>% 
-  mutate(country = "Northern Ireland")
-ni
-```
-
-```{r}
-uk <- bind_rows(eng, scot, ni) %>% 
-  mutate(country = factor(country,
-                          levels = c("England", "Scotland", "Northern Ireland")))
-```
+## Plot
 
 
 ```{r}
