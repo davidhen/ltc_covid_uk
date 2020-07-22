@@ -224,6 +224,8 @@ uk %>%
 full_join(all_beds, older_beds) %>% 
   pivot_longer(cols = c(2:9), names_to = "measure", values_to = "value") %>% 
   pivot_wider(names_from = "country", values_from = "value") %>% 
+  rowwise() %>% 
+  mutate(Total = sum(c(England, Scotland, `Northern Ireland`))) %>% 
   my_datatable(.)
 ```
 
