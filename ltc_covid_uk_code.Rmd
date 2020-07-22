@@ -37,7 +37,7 @@ library(lubridate)
 library(forcats)
 library(patchwork)
 library(ggthemes)
-
+library(here)
 #Helper function
 `%nin%` <- negate(`%in%`)
 
@@ -137,9 +137,18 @@ ggsave("plots/fig_2.png", fig_2, width = 12, height = 9, dpi = 300)
 ```
 
 
-```{r}
+# Care Home size
 
+
+```{r}
+eng <- read_xlsx("data/ENGLAND_care_homes.xlsx", sheet = "HSCA Active Locations")
+scot <- read_xlsx("data/SCOTLAND_care_homes.xlsx")
+ni <- read_xlsx("data/NI_care_homes.xlsx")
 ```
 
+```{r}
+eng %>% 
+  
+```
 
 
