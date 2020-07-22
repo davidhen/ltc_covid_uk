@@ -168,3 +168,5 @@ fig_3
 ```{r, echo=FALSE, eval=FALSE}
 ggsave("plots/fig_3.png", fig_3, width = 12, height = 9, dpi = 300)
 ```
+
+
