@@ -194,3 +194,36 @@ fig_4
 ```{r, echo=FALSE, eval=FALSE}
 ggsave("plots/fig_4.png", fig_4, width = 12, height = 9, dpi = 300)
 ```
+
+# Table 1
+
+
+```{r}
+uk %>% 
+  group_by(country) %>% 
+  summarise(n_adult_care_homes = n(), 
+            total_beds = sum(`Care homes beds`, na.rm = TRUE),
+            median_number_of_beds = median(`Care homes beds`, na.rm = TRUE),
+            IQR_beds = IQR(`Care homes beds`, na.rm = TRUE)) -> all_beds
+```
+
+
+```{r}
+uk %>% 
+  filter(country != "Northern Ireland") %>% 
+  filter(`Service user band - Older People` == "Y" | Subtype == "Older People") %>%
+  group_by(country) %>% 
+  summarise(n_adult_care_homes_older_people = n(), 
+            total_beds_older_people = sum(`Care homes beds`, na.rm = TRUE),
+            median_number_of_beds_older_people = median(`Care homes beds`, na.rm = TRUE),
+            IQR_beds_older_people = IQR(`Care homes beds`, na.rm = TRUE)) -> older_beds
+```
+
+
+```{r}
+full_join(all_beds, older_beds) %>% 
+  pivot_longer(cols = c(2:9), names_to = "measure", values_to = "value") %>% 
+  pivot_wider(names_from = "country", values_from = "value") %>% 
+  my_datatable(.)
+```
+
