@@ -22,6 +22,8 @@ knitr::opts_chunk$set(echo = TRUE,
 
 There are issues with uploading raw data to RStudio.cloud. As a work around I am going to create a simplified data object to create the care home size boxplot. This is a hacky workaround.  
 
+**Note, this RMD won't knit in RStudio cloud or on any machine other than David Henderson's. The raw data files are too big for Rstudio.cloud to handle so I ran this code locally and saved smaller data objects that could be imported into the `ltc_covid_uk.Rmd` file from the `derived_data` folder. As I said - pretty hacky**
+
 ## Packages
 
 R packages required.....

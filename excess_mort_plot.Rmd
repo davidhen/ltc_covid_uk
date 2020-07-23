@@ -58,55 +58,29 @@ options(scipen = 10,
 ```
 
 
-# England and Wales data
+# England data
 
-I can't find this data where E & W aren't combined. Big shout to Elizabeth for spotting where we could get the combined numbers. It comes from the "Download this chart" button on Figure 8 of the ONS release [here](https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/bulletins/deathsregisteredweeklyinenglandandwalesprovisional/weekending26june2020). 
+Data provided sourced from [here](https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/causesofdeath/datasets/deathregistrationsandoccurrencesbylocalauthorityandhealthboard) and [here](https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/adhocs/11826fiveyearaverageweeklydeathsbylocalauthorityandplaceofoccurrenceenglandandwalesdeathsregistered2015to2019) and collated into `.csv` files by Pietro. I have saved this file in the `excess_mort_data` folder.
 
-```{r, message=FALSE, warning=FALSE}
-#Assign url and download into a temp file
-url <- "https://www.ons.gov.uk/visualisations/dvc891/fig8/datadownload.xlsx"
-temp <- tempfile()
-temp <- curl_download(url=url, destfile=temp, quiet=FALSE)
+```{r}
+england <- read_csv("excess_mort_data/Weekly Summary England.csv")
 
-#Now read in and tidy the names
-ew <- read_xlsx(temp, range = "A8:Q24") %>% 
-  rename(home_all = `All deaths...2`,
-         home_covid = `COVID-19 deaths...3`,
-         home_average = `All deaths 5-year average...4`,
-         home_excess = `Excess deaths...5`,
-         hospital_all = `All deaths...6`,
-         hospital_covid = `COVID-19 deaths...7`,
-         hospital_average = `All deaths 5-year average...8`,
-         hospital_excess = `Excess deaths...9`,
-         carehome_all = `All deaths...10`,
-         carehome_covid = `COVID-19 deaths...11`,
-         carehome_average = `All deaths 5-year average...12`,
-         carehome_excess = `Excess deaths...13`,
-         other_all = `All deaths...14`,
-         other_covid = `COVID-19 deaths...15`,
-         other_average = `All deaths 5-year average...16`,
-         other_excess = `Excess deaths...17`)
-
-#Tidy up so that location is a variable
-ew %<>% 
-  pivot_longer(cols = home_all:other_excess, names_to = "place",
-               values_to = "value") %>% 
-  separate(place, c("location", "type"), sep = "_")  %>% 
-  pivot_wider(names_from = "type", values_from = "value") %>% 
-  arrange(`Week no`, location) %>% 
+england %<>% 
+  slice(-1) %>% 
+  select(location,
+         week_number = `week number`,
+         all = `all deaths`,
+         non_covid, covid, 
+         average = `average 2015-2019`,
+         excess = `excess deaths`, 
+         country) %>% 
   mutate(location = factor(location,
-                           levels = c("hospital", "carehome", "home", "other"),
-                           labels = c("Hospital", "Care Home", "Home", "Other")),
-         non_covid = all - covid,
-         country = "England & Wales") %>% 
-  select(location, `Week no`, all, non_covid, everything()) %>%
-  rename(week_number = `Week no`) %>%
-  mutate(week_number = str_replace(week_number, "Week ", ""),
-         week_number = as.integer(week_number)) %>% 
-  arrange(location)
-ew
-```
+                           levels = c("Hospital", "Care Home", "Home", "Other"),
+                           labels = c("Hospital", "Care Home", "Home", "Other"))) %>% 
+  mutate_at(.vars = c("week_number", "all", "covid"), as.integer)
 
+england
+```
 
 # Scotland data
 
@@ -197,11 +171,41 @@ ch_death_covid %>%
 sc
 ```
 
+# Wales
+
+Same source as England data. Also wrangled into a `.csv` by Pietro.
+
+```{r}
+wales <- read_csv("excess_mort_data/Weekly Summary Wales.csv")
+
+wales %<>% 
+  slice(-1) %>% 
+  select(location,
+         week_number = `week number`,
+         all = `all deaths`,
+         non_covid, covid, 
+         average = `average 2015-2019`,
+         excess = `excess deaths`, 
+         country) %>% 
+  mutate(location = factor(location,
+                           levels = c("Hospital", "Care Home", "Home", "Other"),
+                           labels = c("Hospital", "Care Home", "Home", "Other"))) %>% 
+  mutate_at(.vars = c("week_number", "all", "covid"), as.integer)
+
+wales
+```
+
+
+
 
 # Join together
 
 ```{r}
-uk <- full_join(ew, sc)
+uk <- bind_rows(england, sc, wales)
+
+uk %>%
+  mutate(country = factor(country, 
+                          levels = c("England", "Scotland", "Wales"))) -> uk
 ```
 
 # Plot
@@ -209,7 +213,8 @@ uk <- full_join(ew, sc)
 This is the sort of plot we want as an end result, but with 4 nations....
 
 ```{r}
-uk %>% 
+fig_uk_excess <- 
+  uk %>% 
   filter(location != "Other") %>% 
   mutate(pct_change = (excess / average * 100)) %>% 
   ggplot(aes(week_number, pct_change, fill = location)) +
@@ -223,7 +228,13 @@ uk %>%
        subtitle = "from previous 5-year average",
        x = "Week Number",
        y = "",
-       caption = "Source: ONS & NRS\nCode:https://github.com/davidhen/ltc_covid_scotland/blob/master/uk_comparator.Rmd")
+       caption = "Source: ONS & NRS\nCode:https://github.com/davidhen/ltc_covid_uk/blob/master/excess_mort_plot.Rmd")
+fig_uk_excess
+```
+
+
+```{r, echo=FALSE, eval=FALSE}
+ggsave("plots/fig_uk_excess.png", fig_uk_excess, width = 12, height = 9, dpi = 300)
 ```
 
 # Data table

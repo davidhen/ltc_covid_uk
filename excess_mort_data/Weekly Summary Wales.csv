@@ -1,0 +1,66 @@
+﻿location,week number,all deaths,non_covid,covid,average 2015-2019,excess deaths,unexplained excess deaths,country
+,11 to 26,All causes,,COVID 19,,,,
+Hospital,11,376,376,0,393,-17,-17,Wales
+Hospital,12,364,362,2,373,-9,-11,Wales
+Hospital,13,344,325,19,357,-13,-32,Wales
+Hospital,14,441,326,115,372,69,-46,Wales
+Hospital,15,439,217,222,376,63,-159,Wales
+Hospital,16,510,246,264,362,148,-116,Wales
+Hospital,17,462,202,260,361,101,-159,Wales
+Hospital,18,384,218,166,350,34,-132,Wales
+Hospital,19,284,160,124,342,-58,-182,Wales
+Hospital,20,353,248,105,353,0,-105,Wales
+Hospital,21,297,215,82,331,-34,-116,Wales
+Hospital,22,250,190,60,302,-52,-112,Wales
+Hospital,23,318,250,68,324,-6,-74,Wales
+Hospital,24,238,195,43,312,-74,-117,Wales
+Hospital,25,253,226,27,303,-50,-77,Wales
+Hospital,26,261,242,19,303,-42,-61,Wales
+Care Home,11,100,100,0,120,-20,-20,Wales
+Care Home,12,97,97,0,112,-15,-15,Wales
+Care Home,13,138,137,1,110,28,27,Wales
+Care Home,14,176,168,8,108,68,60,Wales
+Care Home,15,219,163,56,109,110,54,Wales
+Care Home,16,302,184,118,105,197,79,Wales
+Care Home,17,323,198,125,106,217,92,Wales
+Care Home,18,264,170,94,99,165,71,Wales
+Care Home,19,197,121,76,96,101,25,Wales
+Care Home,20,181,114,67,97,84,17,Wales
+Care Home,21,156,112,44,102,54,10,Wales
+Care Home,22,121,86,35,84,37,2,Wales
+Care Home,23,124,96,28,101,23,-5,Wales
+Care Home,24,115,106,9,96,19,10,Wales
+Care Home,25,100,93,7,91,9,2,Wales
+Care Home,26,82,72,10,85,-3,-13,Wales
+Home,11,163,163,0,183,-20,-20,Wales
+Home,12,207,207,0,163,44,44,Wales
+Home,13,207,206,1,165,42,41,Wales
+Home,14,261,252,9,155,106,97,Wales
+Home,15,238,217,21,155,83,62,Wales
+Home,16,314,296,18,163,151,133,Wales
+Home,17,302,281,21,161,141,120,Wales
+Home,18,254,236,18,141,113,95,Wales
+Home,19,188,180,8,145,43,35,Wales
+Home,20,212,208,4,154,58,54,Wales
+Home,21,222,214,8,151,71,63,Wales
+Home,22,194,188,6,132,62,56,Wales
+Home,23,230,227,3,151,79,76,Wales
+Home,24,192,188,4,149,43,39,Wales
+Home,25,229,226,3,144,85,82,Wales
+Home,26,185,184,1,151,34,33,Wales
+Other,11,35,35,0,32,3,3,Wales
+Other,12,51,51,0,32,19,19,Wales
+Other,13,30,30,0,33,-3,-3,Wales
+Other,14,42,40,2,33,9,7,Wales
+Other,15,32,27,5,32,0,-5,Wales
+Other,16,43,34,9,34,9,0,Wales
+Other,17,37,30,7,35,2,-5,Wales
+Other,18,27,24,3,33,-6,-9,Wales
+Other,19,23,20,3,29,-6,-9,Wales
+Other,20,26,22,4,31,-5,-9,Wales
+Other,21,17,17,0,31,-14,-14,Wales
+Other,22,22,18,4,29,-7,-11,Wales
+Other,23,28,27,1,33,-5,-6,Wales
+Other,24,29,28,1,31,-2,-3,Wales
+Other,25,35,33,2,35,0,-2,Wales
+Other,26,24,24,0,31,-7,-7,Wales
