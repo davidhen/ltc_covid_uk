@@ -1,0 +1,237 @@
+---
+title: "UK comparison"
+author: "David Henderson"
+date: "13/07/2020"
+output: 
+  html_document:
+    theme: journal
+    highlight: haddock
+    df_print: paged
+    code_folding: hide
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      fig.width = 12, fig.height = 9,
+                      warning = FALSE, message = FALSE)
+```
+
+# Introduction
+
+1st attempt to combine data from all 4 UK nations to look at excess deaths in 2020 by week and location of death. The main idea of this file is to show co-authors what we are hoping to get as an output. This may not be possible. As you will see here, the data for E & W is combined and we don't have NI data yet. 
+
+## Packages
+
+R packages required.....
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(curl)
+library(readxl)
+library(lubridate)
+library(forcats)
+library(patchwork)
+library(ggthemes)
+
+#Helper function
+`%nin%` <- negate(`%in%`)
+
+#Short cut for csv output with html tables
+my_datatable <- function(x){
+  DT::datatable(x, extensions = "Buttons", options = list(dom = "Bfrtip", 
+                                                          buttons = c("csv")))
+}
+
+#Baseline plot settings
+theme_set(theme_minimal(base_family = "Roboto", base_size = 20) +
+            theme(panel.grid.minor = element_blank(),
+                  axis.title.y = element_text(margin = margin(0, 20, 0, 0)),
+                  axis.title.x = element_text(margin = margin(20, 0, 0, 0)),
+                  plot.caption = element_text(colour = "#AAAAAA"),
+                  plot.margin = margin(3,15,3,3,"mm")))
+
+#global options for scientific numbers and significant digits.          
+options(scipen = 10,
+        digits = 1)
+```
+
+
+# England and Wales data
+
+I can't find this data where E & W aren't combined. Big shout to Elizabeth for spotting where we could get the combined numbers. It comes from the "Download this chart" button on Figure 8 of the ONS release [here](https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/bulletins/deathsregisteredweeklyinenglandandwalesprovisional/weekending26june2020). 
+
+```{r, message=FALSE, warning=FALSE}
+#Assign url and download into a temp file
+url <- "https://www.ons.gov.uk/visualisations/dvc891/fig8/datadownload.xlsx"
+temp <- tempfile()
+temp <- curl_download(url=url, destfile=temp, quiet=FALSE)
+
+#Now read in and tidy the names
+ew <- read_xlsx(temp, range = "A8:Q24") %>% 
+  rename(home_all = `All deaths...2`,
+         home_covid = `COVID-19 deaths...3`,
+         home_average = `All deaths 5-year average...4`,
+         home_excess = `Excess deaths...5`,
+         hospital_all = `All deaths...6`,
+         hospital_covid = `COVID-19 deaths...7`,
+         hospital_average = `All deaths 5-year average...8`,
+         hospital_excess = `Excess deaths...9`,
+         carehome_all = `All deaths...10`,
+         carehome_covid = `COVID-19 deaths...11`,
+         carehome_average = `All deaths 5-year average...12`,
+         carehome_excess = `Excess deaths...13`,
+         other_all = `All deaths...14`,
+         other_covid = `COVID-19 deaths...15`,
+         other_average = `All deaths 5-year average...16`,
+         other_excess = `Excess deaths...17`)
+
+#Tidy up so that location is a variable
+ew %<>% 
+  pivot_longer(cols = home_all:other_excess, names_to = "place",
+               values_to = "value") %>% 
+  separate(place, c("location", "type"), sep = "_")  %>% 
+  pivot_wider(names_from = "type", values_from = "value") %>% 
+  arrange(`Week no`, location) %>% 
+  mutate(location = factor(location,
+                           levels = c("hospital", "carehome", "home", "other"),
+                           labels = c("Hospital", "Care Home", "Home", "Other")),
+         non_covid = all - covid,
+         country = "England & Wales") %>% 
+  select(location, `Week no`, all, non_covid, everything()) %>%
+  rename(week_number = `Week no`) %>%
+  mutate(week_number = str_replace(week_number, "Week ", ""),
+         week_number = as.integer(week_number)) %>% 
+  arrange(location)
+ew
+```
+
+
+# Scotland data
+
+This comes from two files on the NRS site. One has weekly COIVD and all-cause deaths, the other the weekly numbers (including averages) for the previous 5 years.
+
+```{r, warning=FALSE, message=FALSE}
+temp_1 <- tempfile()
+temp_2 <- tempfile()
+source <- "https://www.nrscotland.gov.uk/files//statistics/covid19/covid-deaths-data-week-26.zip"
+
+temp_1 <- curl_download(url = source, destfile = temp_1, quiet = FALSE)
+unzip(temp_1, exdir = temp_2)
+
+ch_death_covid <- read_csv(file.path(temp_2,"covid-deaths-data-week-26_Table 1 - COVID deaths.csv"), skip = 3)
+ch_death_all <- read_csv(file.path(temp_2, "covid-deaths-data-week-26_Table 2 - All deaths.csv"), skip = 3)
+#5 year average can be downladed directly from this link...
+ch_death_average <- read_csv("https://www.nrscotland.gov.uk/files//statistics/covid19/weekly-deaths-by-location-2015-2019.csv", skip = 2)
+
+#Now tidy and join together
+
+loc_names <- c("Care Home", "Home and other non institution", "Hospital",
+          "Other institution")
+
+# Create a look-up table for week numbers to dates
+week_lookup <- tibble(
+  week_number = 1:52,
+  week_date = seq(ymd(20191230), ymd(20201221), by = "1 week"))
+
+
+#Wrangle Average deaths
+ch_death_average %>% 
+  slice(2:6, 9:13, 16:20, 23:27) %>% 
+  mutate(location = rep(loc_names, each = 5, times = 1)) %>% 
+  select(year = `Week number2`, location, everything(), -`53`) %>% 
+  pivot_longer(cols = `1`:`52`, names_to = "week_number",
+               values_to = "n_deaths") %>% 
+  group_by(location, week_number) %>%
+  mutate(min_deaths = min(n_deaths),
+         max_deaths = max(n_deaths),
+         mean_deaths = mean(n_deaths)) %>% 
+  distinct(location, week_number, .keep_all = TRUE) %>% 
+  select(-year, -n_deaths) %>% 
+  ungroup %>% 
+  mutate(week_number = as.integer(week_number)) -> sc
+
+#Wrangle all deaths
+ch_death_all %>% 
+  select(location = X2, everything(), -`Week beginning`, -X30:-X65) %>% 
+  slice(85:88) %>%  
+  mutate_at(vars(`30-Dec-19`:`22-Jun-20`), as.numeric) %>% 
+  pivot_longer(cols = `30-Dec-19`:`22-Jun-20`, names_to = "date",
+               values_to = "deaths_all_2020") %>% 
+  mutate(date = dmy(date),
+         week_number = rep(1:26, each = 1, times = 4),
+         location = rep(loc_names, each = 26, times = 1)) %>% 
+  select(-date) %>% 
+  left_join(sc, .) -> sc
+
+
+#Wrangle Covid deaths and join together
+ch_death_covid %>% 
+  select(location = X2, everything(), -`Week beginning`,
+         -`Year to Date`:-X44) %>% 
+  slice(83:86) %>%  
+  pivot_longer(cols = `30-Dec-19`:`22-Jun-20`, names_to = "date",
+               values_to = "deaths_covid_2020") %>% 
+  mutate(date = dmy(date),
+         week_number = rep(1:26, each = 1, times = 4),
+         location = rep(loc_names, each = 26, times = 1)) %>% 
+  select(-date) %>% 
+  left_join(sc, .) %>% 
+  mutate(deaths_nonCovid_2020 = deaths_all_2020 - deaths_covid_2020,
+         location = factor(location,
+                           levels = c("Hospital", "Care Home", 
+                                      "Home and other non institution", 
+                                      "Other institution"),
+                           labels = c("Hospital", "Care Home", "Home", "Other"))) %>% 
+  left_join(., week_lookup) %>% 
+  filter(week_number >=11 & week_number <= 26) %>% 
+  select(-min_deaths, -max_deaths, -X29, -week_date) %>% 
+  rename(all = deaths_all_2020,
+         covid = deaths_covid_2020,
+         non_covid = deaths_nonCovid_2020,
+         average = mean_deaths) %>% 
+  mutate(excess = all - average,
+         country = "Scotland") -> sc
+
+sc
+```
+
+
+# Join together
+
+```{r}
+uk <- full_join(ew, sc)
+```
+
+# Plot
+
+This is the sort of plot we want as an end result, but with 4 nations....
+
+```{r}
+uk %>% 
+  filter(location != "Other") %>% 
+  mutate(pct_change = (excess / average * 100)) %>% 
+  ggplot(aes(week_number, pct_change, fill = location)) +
+  geom_col() +
+  facet_grid(country ~ location) +
+  scale_fill_wsj() +
+  scale_y_continuous(limits = c(-50, 300),
+                     labels = scales::percent_format(scale = 1)) +
+  theme(legend.position = "none") +
+  labs(title = "Percentange change in all-cause mortality 2020",
+       subtitle = "from previous 5-year average",
+       x = "Week Number",
+       y = "",
+       caption = "Source: ONS & NRS\nCode:https://github.com/davidhen/ltc_covid_scotland/blob/master/uk_comparator.Rmd")
+```
+
+# Data table
+
+Click on the CSV button to download the wrangeled dataset..
+
+```{r}
+my_datatable(uk)
+```
+
+
