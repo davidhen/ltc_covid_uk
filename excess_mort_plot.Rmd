@@ -213,29 +213,108 @@ uk %>%
 This is the sort of plot we want as an end result, but with 4 nations....
 
 ```{r}
-fig_uk_excess <- 
+fig_uk_excess_1 <- 
   uk %>% 
-  filter(location != "Other") %>% 
   mutate(pct_change = (excess / average * 100)) %>% 
-  ggplot(aes(week_number, pct_change, fill = location)) +
+  ggplot(aes(week_number, pct_change, fill = country)) +
   geom_col() +
-  facet_grid(country ~ location) +
+  facet_grid(location~country) +
   scale_fill_wsj() +
   scale_y_continuous(limits = c(-50, 300),
                      labels = scales::percent_format(scale = 1)) +
   theme(legend.position = "none") +
-  labs(title = "Percentange change in all-cause mortality 2020",
-       subtitle = "from previous 5-year average",
+  labs(title = "by Location and Week",
        x = "Week Number",
-       y = "",
-       caption = "Source: ONS & NRS\nCode:https://github.com/davidhen/ltc_covid_uk/blob/master/excess_mort_plot.Rmd")
-fig_uk_excess
+       y = "")#,
+       #caption = "Source: ONS & NRS\nCode:https://github.com/davidhen/ltc_covid_uk/blob/master/excess_mort_plot.Rmd")
+fig_uk_excess_1
 ```
 
 
 ```{r, echo=FALSE, eval=FALSE}
 ggsave("plots/fig_uk_excess.png", fig_uk_excess, width = 12, height = 9, dpi = 300)
 ```
+
+
+```{r, fig.width=12, fig.height=6}
+fig_excess_uk_2 <-
+  uk %>% 
+  group_by(country, location) %>% 
+  summarise(all = sum(all), 
+            average = sum(average),
+            excess = all - average,
+            pct_change = excess / average * 100) %>% 
+  ggplot(aes(country, pct_change, fill = country)) +
+  geom_col() +
+  facet_grid(~location) +
+  scale_fill_wsj() +
+  scale_y_continuous(limits = c(-20,80),
+                     labels = scales::percent_format(scale = 1),
+                     breaks = scales::pretty_breaks()) +
+  theme(legend.position = "top",
+        axis.text.x = element_blank()) +
+  labs(title = "by Location",
+       x = "",
+       y = "",
+       fill = "")
+fig_excess_uk_2
+```
+
+
+
+```{r}
+fig_excess_uk_2 + fig_uk_excess_1 +
+  plot_annotation(title = "Excess mortality in the UK 2020",
+                  subtitle = "by Location of death",
+                  caption = "Source: ONS & NRS\nCode:https://github.com/davidhen/ltc_covid_uk/blob/master/excess_mort_plot.Rmd") +
+  plot_layout(widths = c(1,1.1)) -> uk_excess_comb
+uk_excess_comb
+```
+
+```{r, echo=FALSE, eval=FALSE}
+ggsave("plots/uk_excess_comb.png", uk_excess_comb, width = 24, height = 12, dpi = 300)
+```
+
+
+
+```{r}
+uk %>% 
+  group_by(country) %>% 
+  summarise(all = sum(all), 
+            average = sum(average),
+            excess = all - average,
+            pct_change = excess / average * 100) %>% 
+  ggplot(aes(country, pct_change, fill = country)) +
+  geom_col() +
+  scale_fill_wsj() +
+  scale_y_continuous(limits = c(0,40),
+                     labels = scales::percent_format(scale = 1)) +
+  theme(legend.position = "none") +
+  labs(title = "Overall",
+       x = "",
+       y = "",
+       caption = "") -> uk_excess
+uk_excess
+```
+
+```{r, echo=FALSE, eval=FALSE}
+ggsave("plots/uk_excess.png", uk_excess, width = 12, height = 9, dpi = 300)
+```
+
+```{r, fig.width=14, fig.height=14}
+(uk_excess + fig_excess_uk_2) / fig_uk_excess_1 +
+  plot_annotation(title = "Excess mortality in the UK 2020",
+                  subtitle = "Percentage change from average of previous 5 years: Weeks 11-26",
+                  caption = "Source: ONS & NRS\nCode:https://github.com/davidhen/ltc_covid_uk/blob/master/excess_mort_plot.Rmd") +
+  plot_layout(heights = c(1, 1.2))-> uk_excess_comb
+uk_excess_comb
+```
+
+```{r, echo=FALSE, eval=FALSE}
+ggsave("plots/uk_excess_comb.png", uk_excess_comb, width = 18, height = 18, dpi = 300)
+```
+
+
 
 # Data table
 
