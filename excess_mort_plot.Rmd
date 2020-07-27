@@ -303,8 +303,8 @@ ggsave("plots/uk_excess.png", uk_excess, width = 12, height = 9, dpi = 300)
 
 ```{r, fig.width=14, fig.height=14}
 (uk_excess + fig_excess_uk_2) / fig_uk_excess_1 +
-  plot_annotation(title = "Excess mortality in the UK 2020",
-                  subtitle = "Percentage change from average of previous 5 years: Weeks 11-26",
+  plot_annotation(title = "",
+                  subtitle = "",
                   caption = "Source: ONS & NRS\nCode:https://github.com/davidhen/ltc_covid_uk/blob/master/excess_mort_plot.Rmd") +
   plot_layout(heights = c(1, 1.2))-> uk_excess_comb
 uk_excess_comb
