@@ -140,6 +140,40 @@ ggsave("plots/fig_2.png", fig_2, width = 12, height = 9, dpi = 300)
 
 # Figure 3
 
+```{r}
+url <- "https://www.nrscotland.gov.uk/files//statistics/covid19/weekly-deaths-by-location-age-group-sex.xlsx"
+temp <- tempfile()
+temp <- curl_download(url=url, destfile=temp, quiet=FALSE)
+
+#tidy up
+scot_deaths_data <-
+  read_xlsx(temp, sheet="Data", 
+            range = "A3:F1229") %>% 
+  rename(week = 'Registration Week') %>% 
+  rename(covid_death = 'Cause of Death') %>% 
+  rename(age_band = 'Age band') %>% 
+  mutate(week = as.integer(week)) %>% 
+  filter(week >= 11) %>% 
+  filter(Location == "Care Home")%>% 
+  filter(covid_death == "COVID-19")
+
+scot_deaths_data %>% 
+  group_by(age_band) %>% 
+  summarise(tot_deaths = sum(Deaths)) %>% 
+  ggplot(aes(age_band,tot_deaths)) +
+  geom_col(fill = "#016392")+
+  labs(x = "Age Band",
+       y = "") -> fig_3
+fig_3
+
+```
+```{r, echo=FALSE, eval=FALSE}
+ggsave("plots/fig_3.png", fig_3, width = 12, height = 9, dpi = 300)
+```
+
+
+
+# Figure 4
 ## Load in data
 Data created in "care_inspectorate_wrangle.Rmd" file
 
@@ -161,8 +195,8 @@ uk %>%
   coord_flip() +
   labs(x = "",
        y = "Number of care home beds",
-       caption = "Outer line indicates distribution\nStrong vertical line in box indicates the median\nBox limits indicate 25th and 75th percentile\nDots indicate statistical outliers") -> fig_3
-fig_3
+       caption = "Outer line indicates distribution\nStrong vertical line in box indicates the median\nBox limits indicate 25th and 75th percentile\nDots indicate statistical outliers") -> fig_4
+fig_4
 ```
 
 ```{r, echo=FALSE, eval=FALSE}
@@ -170,7 +204,7 @@ ggsave("plots/fig_3.png", fig_3, width = 12, height = 9, dpi = 300)
 ```
 
 
-# Figure 4 
+# Figure 5
 
 Plot older people only
 
@@ -187,8 +221,8 @@ uk %>%
   coord_flip() +
   labs(x = "",
        y = "Number of care home beds",
-       caption = "Outer line indicates distribution\nStrong vertical line in box indicates the median\nBox limits indicate 25th and 75th percentile\nDots indicate statistical outliers") -> fig_4
-fig_4
+       caption = "Outer line indicates distribution\nStrong vertical line in box indicates the median\nBox limits indicate 25th and 75th percentile\nDots indicate statistical outliers") -> fig_5
+fig_5
 ```
 
 ```{r, echo=FALSE, eval=FALSE}
