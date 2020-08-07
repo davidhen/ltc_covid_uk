@@ -167,6 +167,8 @@ scot_deaths_data %>%
 fig_3
 
 ```
+
+
 ```{r, echo=FALSE, eval=FALSE}
 ggsave("plots/fig_3.png", fig_3, width = 12, height = 9, dpi = 300)
 ```
@@ -200,7 +202,7 @@ fig_4
 ```
 
 ```{r, echo=FALSE, eval=FALSE}
-ggsave("plots/fig_3.png", fig_3, width = 12, height = 9, dpi = 300)
+ggsave("plots/fig_4.png", fig_4, width = 12, height = 9, dpi = 300)
 ```
 
 
@@ -210,7 +212,7 @@ Plot older people only
 
 ```{r}
 uk %>% 
-  filter(country != "Northern Ireland") %>% 
+  filter(country %nin% c("Northern Ireland", "Wales")) %>% 
   filter(`Service user band - Older People` == "Y" | Subtype == "Older People") %>% 
   ggplot(aes(fct_rev(country), `Care homes beds`)) +
   geom_violin(alpha = 0.5, colour = "grey") +
@@ -226,7 +228,7 @@ fig_5
 ```
 
 ```{r, echo=FALSE, eval=FALSE}
-ggsave("plots/fig_4.png", fig_4, width = 12, height = 9, dpi = 300)
+ggsave("plots/fig_5.png", fig_5, width = 12, height = 9, dpi = 300)
 ```
 
 # Table 1
@@ -244,7 +246,7 @@ uk %>%
 
 ```{r}
 uk %>% 
-  filter(country != "Northern Ireland") %>% 
+  filter(country %nin% c("Northern Ireland", "Wales")) %>% 
   filter(`Service user band - Older People` == "Y" | Subtype == "Older People") %>%
   group_by(country) %>% 
   summarise(n_adult_care_homes_older_people = n(), 
@@ -262,4 +264,6 @@ full_join(all_beds, older_beds) %>%
   mutate(Total = sum(c(England, Scotland, `Northern Ireland`))) %>% 
   my_datatable(.)
 ```
+
+**Need to check these numbers** Scotland & Wales with same number of care homes???
 

@@ -53,13 +53,16 @@ my_datatable <- function(x){
 eng <- read_xlsx("raw_data/ENGLAND_care_homes.xlsx", sheet = "HSCA Active Locations")
 scot <- read_xlsx("raw_data/SCOTLAND_care_homes.xlsx", sheet = "MDSF_data_31 May 2020")
 ni <- read_xlsx("raw_data/NI_care_homes.xlsx")
+w <- read_xlsx("raw_data/CIW - 20200730 - list of adult care homes in Wales.xlsx", 
+               range = "A4:K1060")
 ```
 
 ```{r}
 eng %<>% 
   filter(`Care home?` == "Y" & 
            `Location Inspection Directorate` == "Adult social care") %>% 
-  select(`Location Name`, `Care homes beds`, `Service user band - Older People`)  %>% 
+  select(`Location Name`, `Care homes beds`, `Service user band - Older People`) %>%
+  #filter(!is.na(`Service user band - Older People`))
   mutate(country = "England")
 eng
 ```
@@ -86,9 +89,21 @@ ni
 ```
 
 ```{r}
-uk <- bind_rows(eng, scot, ni) %>% 
+w %<>% 
+  select(`Location Name` = `Service Name`,
+         `Care homes beds` = `Maximum Capacity`,
+         `Service Sub Type`) %>% 
+  mutate(country = "Wales")
+w  
+```
+
+
+
+
+```{r}
+uk <- bind_rows(eng, scot, w, ni) %>% 
   mutate(country = factor(country,
-                          levels = c("England", "Scotland", "Northern Ireland")))
+                          levels = c("England", "Scotland", "Wales", "Northern Ireland")))
 uk
 ```
 
