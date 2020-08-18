@@ -194,18 +194,70 @@ wales %<>%
 
 wales
 ```
+# Northern Ireland
+
+Multisheet Excel file via Siobhán. Needs some wrangling....
+
+```{r}
+ni_hosp <- read_xlsx("excess_mort_data/NI results_revised.xlsx", sheet = 3, 
+                    range = "A2:I18") %>% 
+  mutate(location = "Hospital") %>% 
+  select(location,
+         week_number = `...1`,
+         all = `2020`,
+         average = Average,
+         excess)
+ 
+
+ni_ch <- read_xlsx("excess_mort_data/NI results_revised.xlsx", sheet = 2,
+                   range = "A2:I18") %>% 
+  mutate(location = "Care Home") %>% 
+  select(location, 
+         week_number = `...1`,
+         all = `2020`,
+         average = Average,
+         excess)
+
+ni_home <- read_xlsx("excess_mort_data/NI results_revised.xlsx", sheet = 4,
+                     range = "A2:I18") %>% 
+  mutate(location = "Home") %>% 
+  select(location,
+         week_number = `...1`,
+         all = `2020`,
+         average = Average,
+         excess)
+
+ni_other <-  read_xlsx("excess_mort_data/NI results_revised.xlsx", sheet = 5,
+                     range = "A2:I18") %>% 
+  mutate(location = "Other") %>% 
+  select(location,
+         week_number = `...1`,
+         all = `2020`,
+         average = Average,
+         excess)
+
+ni <- 
+  bind_rows(ni_hosp, ni_ch, ni_home, ni_other) %>% 
+  mutate(country = "Northern Ireland") %>% 
+  separate(week_number, c("drop", "week_number"), sep = " ") %>% 
+  mutate(week_number = as.integer(week_number)) %>% 
+    select(-drop)
 
 
+ni %>% 
+  mutate(pct_increase = excess/average*100)
+```
 
 
 # Join together
 
 ```{r}
-uk <- bind_rows(england, sc, wales)
+uk <- bind_rows(england, sc, wales, ni)
 
 uk %>%
   mutate(country = factor(country, 
-                          levels = c("England", "Scotland", "Wales"))) -> uk
+                          levels = c("England", "Scotland", 
+                                     "Wales", "Northern Ireland"))) -> uk
 ```
 
 # Plot
@@ -301,7 +353,7 @@ uk_excess
 ggsave("plots/uk_excess.png", uk_excess, width = 12, height = 9, dpi = 300)
 ```
 
-```{r, fig.width=14, fig.height=14}
+```{r, fig.width=16, fig.height=16}
 (uk_excess + fig_excess_uk_2) / fig_uk_excess_1 +
   plot_annotation(title = "",
                   subtitle = "",
@@ -311,7 +363,7 @@ uk_excess_comb
 ```
 
 ```{r, echo=FALSE, eval=FALSE}
-ggsave("plots/uk_excess_comb.png", uk_excess_comb, width = 18, height = 18, dpi = 300)
+ggsave("plots/uk_excess_comb.png", uk_excess_comb, width = 16, height = 16, dpi = 300)
 ```
 
 
