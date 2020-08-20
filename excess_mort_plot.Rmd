@@ -33,7 +33,7 @@ library(readxl)
 library(lubridate)
 library(forcats)
 library(patchwork)
-library(ggthemes)
+library(paletteer)
 
 #Helper function
 `%nin%` <- negate(`%in%`)
@@ -271,7 +271,7 @@ fig_uk_excess_1 <-
   ggplot(aes(week_number, pct_change, fill = country)) +
   geom_col() +
   facet_grid(location~country) +
-  scale_fill_wsj() +
+  scale_fill_paletteer_d("ggthemr::light") +
   scale_y_continuous(limits = c(-50, 300),
                      labels = scales::percent_format(scale = 1)) +
   theme(legend.position = "none") +
@@ -299,7 +299,7 @@ fig_excess_uk_2 <-
   ggplot(aes(country, pct_change, fill = country)) +
   geom_col() +
   facet_grid(~location) +
-  scale_fill_wsj() +
+  scale_fill_paletteer_d("ggthemr::light") +
   scale_y_continuous(limits = c(-20,80),
                      labels = scales::percent_format(scale = 1),
                      breaks = scales::pretty_breaks()) +
@@ -338,7 +338,7 @@ uk %>%
             pct_change = excess / average * 100) %>% 
   ggplot(aes(country, pct_change, fill = country)) +
   geom_col() +
-  scale_fill_wsj() +
+  scale_fill_paletteer_d("ggthemr::light") +
   scale_y_continuous(limits = c(0,40),
                      labels = scales::percent_format(scale = 1)) +
   theme(legend.position = "none") +
@@ -357,7 +357,7 @@ ggsave("plots/uk_excess.png", uk_excess, width = 12, height = 9, dpi = 300)
 (uk_excess + fig_excess_uk_2) / fig_uk_excess_1 +
   plot_annotation(title = "",
                   subtitle = "",
-                  caption = "Source: ONS & NRS\nCode:https://github.com/davidhen/ltc_covid_uk/blob/master/excess_mort_plot.Rmd") +
+                  caption = "Source: ONS, NRS & NISRA\nCode:https://github.com/davidhen/ltc_covid_uk/blob/master/excess_mort_plot.Rmd") +
   plot_layout(heights = c(1, 1.2))-> uk_excess_comb
 uk_excess_comb
 ```
@@ -370,7 +370,7 @@ ggsave("plots/uk_excess_comb.png", uk_excess_comb, width = 16, height = 16, dpi 
 
 # Data table
 
-Click on the CSV button to download the wrangeled dataset..
+Click on the CSV button to download the wrangled dataset..
 
 ```{r}
 my_datatable(uk)
