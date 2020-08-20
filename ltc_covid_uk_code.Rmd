@@ -36,7 +36,7 @@ library(readxl)
 library(lubridate)
 library(forcats)
 library(patchwork)
-library(paletteer)
+library(ggthemes)
 library(here)
 #Helper function
 `%nin%` <- negate(`%in%`)
@@ -102,7 +102,7 @@ uk_deaths_data %>%
   group_by(week_number) %>% 
   summarise(tot_deaths = sum(covid_deaths)) %>% 
   ggplot(aes(week_number, tot_deaths)) +
-  geom_line(colour = paletteer_d("ggthemr::light")[1]) +
+  geom_line(colour = ptol_pal()(1)) +
   scale_x_continuous(breaks = scales::pretty_breaks(n = 12)) +
   scale_y_continuous(breaks = scales::pretty_breaks(),
                      limits = c(0, 10000)) +
@@ -122,7 +122,7 @@ ggsave("plots/fig_1.png", fig_1, width = 12, height = 9, dpi = 300)
 uk_deaths_data %>% 
   ggplot(aes(week_number, deaths_100000, colour = country)) +
   geom_line(size = 1.2) +
-  scale_colour_paletteer_d("ggthemr::light") +
+  scale_colour_ptol() +
   scale_x_continuous(breaks = scales::pretty_breaks(n = 12)) +
   scale_y_continuous(breaks = scales::pretty_breaks()) +
   theme(legend.position = "top") +
@@ -161,7 +161,7 @@ scot_deaths_data %>%
   group_by(age_band) %>% 
   summarise(tot_deaths = sum(Deaths)) %>% 
   ggplot(aes(age_band,tot_deaths)) +
-  geom_col(fill = paletteer_d("ggthemr::light")[1])+
+  geom_col(fill = ptol_pal()(1))+
   labs(x = "Age Band",
        y = "") -> fig_3
 fig_3
@@ -191,7 +191,7 @@ uk %>%
   ggplot(aes(fct_rev(country), `Care homes beds`, colour = country)) +
   geom_violin(alpha = 0.5) +
   geom_boxplot(width = 0.2) +
-  scale_colour_paletteer_d("ggthemr::light") +
+  scale_colour_ptol() +
   theme(legend.position = "none",
         plot.caption = element_text(size = 12)) +
   coord_flip() +
@@ -217,7 +217,7 @@ uk %>%
   ggplot(aes(fct_rev(country), `Care homes beds`, colour = country)) +
   geom_violin(alpha = 0.5) +
   geom_boxplot(width = 0.2) +
-  scale_colour_paletteer_d("ggthemr::light") +
+  scale_colour_ptol() +
   theme(legend.position = "none",
         plot.caption = element_text(size = 12)) +
   coord_flip() +
