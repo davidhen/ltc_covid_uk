@@ -37,6 +37,7 @@ library(lubridate)
 library(forcats)
 library(patchwork)
 library(ggthemes)
+library(socviz)
 library(here)
 #Helper function
 `%nin%` <- negate(`%in%`)
@@ -91,7 +92,9 @@ uk_deaths_data <-
            country == "Northern Ireland" ~ 1893667),
     deaths_100000 = covid_deaths/pop * 100000)
 
-uk_deaths_data
+uk_deaths_data %>% 
+  round_df() %>% 
+  my_datatable(.)
 ```
 
 
@@ -116,6 +119,15 @@ ggsave("plots/fig_1.png", fig_1, width = 12, height = 9, dpi = 300)
 ```
 
 
+## Calculate total deaths in period
+
+```{r}
+uk_deaths_data %>% 
+  summarise(tot_deaths = sum(covid_deaths))
+```
+
+
+
 # Figure 2
 
 ```{r}
@@ -136,6 +148,29 @@ fig_2
 ggsave("plots/fig_2.png", fig_2, width = 12, height = 9, dpi = 300)
 ```
 
+## Table of plot
+
+```{r}
+uk_deaths_data %>% 
+  group_by(country) %>% 
+  summarise(covid_deaths = sum(covid_deaths),
+            pop = pop) %>% 
+  distinct() %>% 
+  mutate(total_per_100k = covid_deaths/pop * 100000)
+```
+## UK per 100k
+
+```{r}
+uk_deaths_data %>% 
+  group_by(country) %>% 
+  summarise(covid_deaths = sum(covid_deaths),
+            pop = pop) %>% 
+  distinct() %>% 
+  ungroup() %>% 
+  summarise(covid_deaths = sum(covid_deaths),
+            pop = sum(pop)) %>% 
+  mutate(uk_death_100k = covid_deaths/pop * 100000)
+```
 
 
 # Figure 3

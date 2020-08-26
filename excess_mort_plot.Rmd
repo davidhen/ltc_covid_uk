@@ -261,6 +261,11 @@ uk %>%
                                      "Wales", "Northern Ireland"))) -> uk
 ```
 
+```{r}
+uk
+```
+
+
 # Plot
 
 This is the sort of plot we want as an end result, but with 4 nations....
