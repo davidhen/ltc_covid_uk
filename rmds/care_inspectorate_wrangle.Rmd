@@ -67,7 +67,7 @@ eng %<>%
   select(`Location Name`, `Care homes beds`, `Service user band - Older People`) %>%
   #filter(!is.na(`Service user band - Older People`))
   mutate(country = "England")
-my_datatable(eng)
+eng
 ```
 
 ```{r}
@@ -78,7 +78,7 @@ scot %<>%
   select(`Location Name` = ServiceName, 
          `Care homes beds` = TotalBeds, Subtype) %>% 
   mutate(country = "Scotland")
-my_datatable(scot)
+scot
 ```
 
 ```{r}
@@ -93,8 +93,8 @@ ni %<>%
   select(`Location Name` = ServiceName,
          `Care homes beds` = `Max Approved Places`,
          `Categories of Care`) %>% 
-  mutate(country = "Northern Ireland") 
-my_datatable(ni)
+  mutate(country = "Northern Ireland")
+ni
 ```
 
 ```{r}
@@ -103,7 +103,7 @@ w %<>%
          `Care homes beds` = `Maximum Capacity`,
          `Service Sub Type`) %>% 
   mutate(country = "Wales")
-my_datatable(w)
+w
 ```
 
 
@@ -113,7 +113,7 @@ my_datatable(w)
 uk <- bind_rows(eng, scot, w, ni) %>% 
   mutate(country = factor(country,
                           levels = c("England", "Scotland", "Wales", "Northern Ireland")))
-my_datatable(uk)
+uk
 ```
 
 

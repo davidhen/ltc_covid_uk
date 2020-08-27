@@ -111,8 +111,7 @@ uk %>%
   summarise(total_n = n(),
             total_beds = sum(`Care homes beds`, na.rm = TRUE)) %>% 
   mutate(total_n = as.numeric(total_n)) %>% 
-  bind_rows(summarise_all(., funs(if(is.numeric(.)) sum(.) else "Total"))) %>% 
-  my_datatable(.)
+  bind_rows(summarise_all(., funs(if(is.numeric(.)) sum(.) else "Total")))
 ```
 *Note 15 care homes in Scotland do not provide `total_beds` figures.*
 
@@ -135,8 +134,7 @@ uk %>%
   )) %>% 
   group_by(country) %>% 
   summarise(total_n = n(),
-            total_beds = sum(`Care homes beds`, na.rm = TRUE)) %>% 
-  my_datatable(.)
+            total_beds = sum(`Care homes beds`, na.rm = TRUE))
 ```
 
 *Note 10 care homes in Scotland do not provide `total_beds` figures.*
@@ -186,8 +184,7 @@ uk_deaths_data <-
     deaths_100000 = covid_deaths/pop * 100000)
 #Print out the result
 uk_deaths_data %>% 
-  round_df() %>% 
-  my_datatable(.)
+  round_df() 
 ```
 
 
@@ -224,8 +221,7 @@ A figure referenced in the text of the report
 
 ```{r}
 uk_deaths_data %>% 
-  summarise(tot_deaths = sum(covid_deaths)) %>% 
-  my_datatable(.)
+  summarise(tot_deaths = sum(covid_deaths)) 
 ```
 
 
@@ -265,8 +261,7 @@ uk_deaths_data %>%
   summarise(covid_deaths = sum(covid_deaths),
             pop = pop) %>% 
   distinct() %>% 
-  mutate(total_per_100k = covid_deaths/pop * 100000) %>% 
-  my_datatable(.)
+  mutate(total_per_100k = covid_deaths/pop * 100000)
 ```
 ## UK per 100k
 
@@ -281,8 +276,7 @@ uk_deaths_data %>%
   ungroup() %>% 
   summarise(covid_deaths = sum(covid_deaths),
             pop = sum(pop)) %>% 
-  mutate(uk_death_100k = covid_deaths/pop * 100000) %>% 
-  my_datatable(.)
+  mutate(uk_death_100k = covid_deaths/pop * 100000) 
 ```
 
 
