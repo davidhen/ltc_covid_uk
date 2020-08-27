@@ -67,7 +67,7 @@ eng %<>%
   select(`Location Name`, `Care homes beds`, `Service user band - Older People`) %>%
   #filter(!is.na(`Service user band - Older People`))
   mutate(country = "England")
-eng
+my_datatable(eng)
 ```
 
 ```{r}
