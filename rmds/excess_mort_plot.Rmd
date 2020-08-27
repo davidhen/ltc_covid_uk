@@ -82,7 +82,7 @@ england %<>%
                            labels = c("Hospital", "Care Home", "Home", "Other"))) %>% 
   mutate_at(.vars = c("week_number", "all", "covid"), as.integer)
 
-my_datatable(england)
+england
 ```
 
 # Scotland data
@@ -171,7 +171,7 @@ ch_death_covid %>%
   mutate(excess = all - average,
          country = "Scotland") -> sc
 
-my_datatable(sc)
+sc
 ```
 
 # Wales
@@ -195,7 +195,7 @@ wales %<>%
                            labels = c("Hospital", "Care Home", "Home", "Other"))) %>% 
   mutate_at(.vars = c("week_number", "all", "covid"), as.integer)
 
-my_datatable(wales)
+wales
 ```
 # Northern Ireland
 
@@ -247,7 +247,7 @@ ni <-
     select(-drop)
 
 
-my_datatable(ni)
+ni
 ```
 
 
@@ -263,7 +263,7 @@ uk %>%
 ```
 
 ```{r}
-my_datatable(uk)
+uk
 ```
 
 
@@ -299,8 +299,7 @@ ggsave("plots/fig_uk_excess.png", fig_uk_excess, width = 12, height = 9, dpi = 3
 ```{r}
 uk %>% 
   mutate(pct_change = (excess / average * 100)) %>% 
-  arrange(country, location, week_number) %>% 
-  my_datatable(.)
+  arrange(country, location, week_number) 
 ```
 
 
@@ -342,8 +341,7 @@ uk %>%
             average = sum(average), 
             excess = all - average) %>% 
   mutate(pct_change = (excess / average * 100)) %>% 
-  arrange(location) %>% 
-  my_datatable(.)
+  arrange(location) 
 ```
 
 
@@ -375,8 +373,7 @@ uk %>%
   summarise(all = sum(all),
             average = sum(average), 
             excess = all - average) %>% 
-  mutate(pct_change = (excess / average * 100)) %>% 
-  my_datatable(.)
+  mutate(pct_change = (excess / average * 100)) 
 ```
 
 
@@ -428,8 +425,7 @@ uk %>%
   summarise(all = sum(all),
             average = sum(average), 
             excess = all - average) %>% 
-  mutate(pct_change = (excess / average * 100)) %>% 
-  my_datatable(.)
+  mutate(pct_change = (excess / average * 100)) 
 ```
 
 
