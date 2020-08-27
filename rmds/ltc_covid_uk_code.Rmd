@@ -1,0 +1,287 @@
+---
+title: "UK comparison"
+author: "David Henderson"
+date: "13/07/2020"
+output: 
+  html_document:
+    theme: journal
+    highlight: haddock
+    df_print: paged
+    code_folding: hide
+    toc: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      fig.width = 12, fig.height = 9,
+                      warning = FALSE, message = FALSE)
+```
+
+# Introduction
+
+Code for figures and values for Figures 1, 2, and 3.
+
+## Packages
+
+R packages and helper functions....
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(curl)
+library(readxl)
+library(forcats)
+library(ggthemes)
+library(socviz)
+library(here)
+here()
+#Helper function
+`%nin%` <- negate(`%in%`)
+
+#Short cut for csv output with html tables
+my_datatable <- function(x){
+  DT::datatable(x, extensions = "Buttons", options = list(dom = "Bfrtip", 
+                                                          buttons = c("csv")))
+}
+
+#Baseline plot settings
+theme_set(theme_minimal(base_family = "Roboto", base_size = 20) +
+            theme(panel.grid.minor = element_blank(),
+                  axis.title.y = element_text(margin = margin(0, 20, 0, 0)),
+                  axis.title.x = element_text(margin = margin(20, 0, 0, 0)),
+                  plot.caption = element_text(colour = "#AAAAAA"),
+                  plot.margin = margin(3,15,3,3,"mm")))
+
+#global options for scientific numbers and significant digits.          
+options(scipen = 10,
+        digits = 1)
+```
+
+
+
+# Figure 1
+
+Figure 1 shows the distribution of care home size across the 4 nations with violin and boxplots.
+
+## Load in data
+
+The data used to create this plot is derived from information from the relevant Care inspectorates in each nation. These files required some pre-processing which can be found in the `care_inspectorate_wrangle.Rmd` file. The raw data files are in the `raw_data` folder. The derived, combined, dataset is imaginatively called `uk` and is found in the `derived_data` folder as a `feather` object.
+
+
+```{r}
+#read in wrangled data to global environment
+uk <- feather::read_feather(here("derived_data/uk.feather"))
+```
+
+## Plot all care homes
+
+Note this plot shows the distribution of all adult care homes in each country, not care homes for older people.
+
+```{r}
+uk %>% 
+  ggplot(aes(fct_rev(country), `Care homes beds`, colour = country)) +
+  geom_violin(alpha = 0.5) +
+  geom_boxplot(width = 0.2) +
+  scale_colour_wsj() +
+  theme(legend.position = "none",
+        plot.caption = element_text(size = 12)) +
+  coord_flip() +
+  labs(x = "",
+       y = "Number of care home beds",
+       caption = "Outer line indicates distribution\nStrong vertical line in box indicates the median\nBox limits indicate 25th and 75th percentile\nDots indicate statistical outliers") -> fig_1
+fig_1
+```
+
+```{r, echo=FALSE, eval=FALSE}
+ggsave(here("plots/fig_4.png"), fig_1, width = 12, height = 9, dpi = 300)
+```
+
+
+# Calculate number of care homes and bed numbers
+
+Some useful summary figures which contribute to Table 1 in the report
+
+## All Adult Care Homes
+
+This uses all data in the `uk` data object
+
+```{r}
+uk %>% 
+  group_by(country) %>% 
+  summarise(total_n = n(),
+            total_beds = sum(`Care homes beds`, na.rm = TRUE)) %>% 
+  mutate(total_n = as.numeric(total_n)) %>% 
+  bind_rows(summarise_all(., funs(if(is.numeric(.)) sum(.) else "Total")))
+```
+*Note 15 care homes in Scotland do not provide `total_beds` figures.*
+
+## Care Homes for older people
+
+Care Inspectorate for Wales does not classify care home type by older people so we must remove them from this summary. The code block below shows how we filtered the other nations data to include only care homes for older people. This is subjective and there is no clear documentation or metadata to aid with this. It is also important to note that some care homes may include a mix of older and younger clients.
+
+England: Filter on "Service User Band - Older people" option
+Scotland: using Subtypes "Older People" and "Respite Care and Short Breaks"
+Northern Ireland: Categories of care including the letters "I" or "DE" (this reflects how Quality Improvement Authority Northern Ireland subset)
+
+```{r}
+uk %>% 
+  filter(country != "Wales") %>% 
+  filter(case_when(
+    country == "England" ~ `Service user band - Older People` == "Y",
+    country == "Scotland" ~ Subtype %in% c("Older People", "Respite Care and Short Breaks"),
+    country == "Northern Ireland" ~ str_detect(`Categories of Care`, "I") | 
+      str_detect(`Categories of Care`, "DE") 
+  )) %>% 
+  group_by(country) %>% 
+  summarise(total_n = n(),
+            total_beds = sum(`Care homes beds`, na.rm = TRUE))
+```
+
+*Note 10 care homes in Scotland do not provide `total_beds` figures.*
+
+# Figures 2 & 3 deaths per 100,000 
+
+## Data
+
+Data for Figure 2 *&* 3 is sourced from the ONS Deaths registered in England and Wales available [here](https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/weeklyprovisionalfiguresondeathsregisteredinenglandandwales)
+
+To calculate per 100,000 estimates we used population estimates from [here](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatesforukenglandandwalesscotlandandnorthernireland) and crudely added them in manually in the code as seen below.
+
+
+
+```{r, message=FALSE, warning=FALSE}
+#Assign url for ONS data and download into a temporary file
+url <- "https://www.ons.gov.uk/file?uri=%2fpeoplepopulationandcommunity%2fbirthsdeathsandmarriages%2fdeaths%2fdatasets%2fweeklyprovisionalfiguresondeathsregisteredinenglandandwales%2f2020/publishedweek282020.xlsx"
+temp <- tempfile()
+temp <- curl_download(url=url, destfile=temp, quiet=FALSE)
+
+
+#Extract weekly data for each country from "UK" Worksheet and tidy up
+uk_deaths_data <-
+  read_xlsx(temp, sheet="UK - Covid-19 - Weekly reg", 
+                         range = "A4:AB12") %>% 
+  slice(5:8) %>% 
+  select(-`Week number`) %>% 
+  rename(country = `...2`) %>% 
+  #reshape to long format
+  pivot_longer(`1`:`26`, names_to = "week_number", 
+               values_to = "covid_deaths") %>% 
+  #coerce week number to integer
+  mutate(week_number = as.integer(week_number)) %>% 
+  #drop rows before week 11
+  filter(week_number >= 11) %>%
+  #coerce country variable to a factor
+  mutate(country = factor(country, 
+                          levels = c("England", "Scotland", 
+                          "Wales", "Northern Ireland")),
+         #manually add in population size
+         pop = case_when(
+           country == "England" ~ 56286961,
+           country == "Wales" ~ 3152879,
+           country == "Scotland" ~ 5463300,
+           country == "Northern Ireland" ~ 1893667),
+    #Calculate deaths per 100,000
+    deaths_100000 = covid_deaths/pop * 100000)
+#Print out the result
+uk_deaths_data %>% 
+  round_df() %>% 
+  my_datatable(.)
+```
+
+
+## Figure 2 Overall deaths
+
+Basic plot of the total number of deaths in each week
+
+```{r}
+uk_deaths_data %>% 
+  #summarise the uk deaths data table
+  group_by(week_number) %>% 
+  summarise(tot_deaths = sum(covid_deaths)) %>% 
+  #and pipe into the plot
+  ggplot(aes(week_number, tot_deaths)) +
+  geom_line(colour = wsj_pal()(1)) +
+  scale_x_continuous(breaks = scales::pretty_breaks(n = 12)) +
+  scale_y_continuous(breaks = scales::pretty_breaks(),
+                     limits = c(0, 10000)) +
+  labs(title = "Weekly deaths attributed to COVID-19 in the UK",
+       x = "Week number",
+       y = "",
+       caption = "Source:ONS Deaths registered in England and Wales, UK deaths\nCode:https://github.com/davidhen/ltc_covid_uk") -> fig_1
+fig_1
+```
+
+```{r, echo=FALSE, eval=FALSE}
+ggsave("plots/fig_1.png", fig_1, width = 12, height = 9, dpi = 300)
+```
+
+
+## Calculate total COVID-19 deaths in period
+
+A figure referenced in the text of the report
+
+```{r}
+uk_deaths_data %>% 
+  summarise(tot_deaths = sum(covid_deaths))
+```
+
+
+
+## Figure 3
+
+Deaths per 100,000 by UK nation. Using same data as above.
+
+```{r}
+uk_deaths_data %>% 
+  ggplot(aes(week_number, deaths_100000, colour = country)) +
+  geom_line(size = 1.2) +
+  scale_colour_wsj() +
+  scale_x_continuous(breaks = scales::pretty_breaks(n = 12)) +
+  scale_y_continuous(breaks = scales::pretty_breaks()) +
+  theme(legend.position = "top") +
+  labs(title = "Weekly deaths attributed to COVID-19 per 100,000",
+       subtitle = "by UK nation",
+       x = "Week number",
+       y = "", 
+       colour = "",
+       caption = "Source:ONS Deaths registered in England and Wales, UK deaths\nCode:https://github.com/davidhen/ltc_covid_uk") -> fig_2
+fig_2
+```
+
+```{r, echo=FALSE, eval=FALSE}
+ggsave("plots/fig_2.png", fig_2, width = 12, height = 9, dpi = 300)
+```
+
+## per 100,000 values by nations
+
+Useful summary figures
+
+```{r}
+uk_deaths_data %>% 
+  group_by(country) %>% 
+  summarise(covid_deaths = sum(covid_deaths),
+            pop = pop) %>% 
+  distinct() %>% 
+  mutate(total_per_100k = covid_deaths/pop * 100000)
+```
+## UK per 100k
+
+More useful summary figs
+
+```{r}
+uk_deaths_data %>% 
+  group_by(country) %>% 
+  summarise(covid_deaths = sum(covid_deaths),
+            pop = pop) %>% 
+  distinct() %>% 
+  ungroup() %>% 
+  summarise(covid_deaths = sum(covid_deaths),
+            pop = sum(pop)) %>% 
+  mutate(uk_death_100k = covid_deaths/pop * 100000)
+```
+
+
+```{r}
+devtools::session_info()
+```
+
