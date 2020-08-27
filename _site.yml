@@ -8,11 +8,11 @@ navbar:
       href: analysis.html
       menu:
         - text: "Care inspectorate wrangle"
-          href: docs/care_inspectorate_wrangle.html
+          href: care_inspectorate_wrangle.html
         - text: "Figures 1-3"
-          href: docs/ltc_covid_uk_code.html
+          href: ltc_covid_uk_code.html
         - text: "Excess mortality plots"
-          href: docs/excess_mort_plot.html
+          href: excess_mort_plot.html
 output:
   html_document:
     theme: journal 
