@@ -14,9 +14,9 @@ knitr::opts_chunk$set(echo = TRUE,
 
 # Introduction
 
-Code for figures and values for Figures 1, 2, and 3.
+This file contains code used to create Figures 1, 2, and 3 and some values for Table 1. We also print out useful underlying data for the plots
 
-## Packages
+## Software
 
 R packages and helper functions....
 
@@ -28,7 +28,6 @@ library(forcats)
 library(ggthemes)
 library(socviz)
 library(here)
-here()
 #Helper function
 `%nin%` <- negate(`%in%`)
 
@@ -49,6 +48,8 @@ theme_set(theme_minimal(base_family = "Roboto", base_size = 20) +
 #global options for scientific numbers and significant digits.          
 options(scipen = 10,
         digits = 1)
+#Set base directory
+here()
 ```
 
 
@@ -59,7 +60,7 @@ Figure 1 shows the distribution of care home size across the 4 nations with viol
 
 ## Load in data
 
-The data used to create this plot is derived from information from the relevant Care inspectorates in each nation. These files required some pre-processing which can be found in the `care_inspectorate_wrangle.Rmd` file. The raw data files are in the `raw_data` folder. The derived, combined, dataset is imaginatively called `uk` and is found in the `derived_data` folder as a `feather` object.
+The data used to create this plot is derived from information from the relevant Care inspectorates in each nation. These files required some pre-processing which can be found in on [this page](https://davidhen.github.io/ltc_covid_uk/care_inspectorate_wrangle.html). The derived, combined, dataset is imaginatively called `uk` and is found in the `derived_data` folder as a `feather` object and can be found on the [project GitHub pages](https://github.com/davidhen/ltc_covid_uk).
 
 
 ```{r}

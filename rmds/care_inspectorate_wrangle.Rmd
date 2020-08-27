@@ -33,7 +33,6 @@ library(readxl)
 library(forcats)
 library(ggthemes)
 library(here)
-here()
 #Helper function
 `%nin%` <- negate(`%in%`)
 
@@ -42,6 +41,8 @@ my_datatable <- function(x){
   DT::datatable(x, extensions = "Buttons", options = list(dom = "Bfrtip", 
                                                           buttons = c("csv")))
 }
+#Set base directory
+here()
 ```
 
 
