@@ -77,16 +77,22 @@ scot %<>%
   select(`Location Name` = ServiceName, 
          `Care homes beds` = TotalBeds, Subtype) %>% 
   mutate(country = "Scotland")
-scot
+unique(scot$Subtype)
 ```
 
 ```{r}
 ni %<>% 
-  filter(Category %in% c("Nursing (NH)", "Residential (RC)")) %>% 
+  filter(Category %in% c("Nursing (NH)", "Residential (RC)")) %>%
+  #filter(str_detect(`Categories of Care`, "I") | 
+           #str_detect(`Categories of Care`, "E") |
+           #str_detect(`Categories of Care`, "DE") |
+          # str_detect(`Categories of Care`, "MP(E)") |
+          # str_detect(`Categories of Care`, "LD(E)") |
+          # str_detect(`Categories of Care`, "PH(E)")) %>% 
   select(`Location Name` = ServiceName,
          `Care homes beds` = `Max Approved Places`,
          `Categories of Care`) %>% 
-  mutate(country = "Northern Ireland")
+  mutate(country = "Northern Ireland") 
 ni
 ```
 
@@ -97,6 +103,7 @@ w %<>%
          `Service Sub Type`) %>% 
   mutate(country = "Wales")
 w  
+unique(w$`Service Sub Type`)
 ```
 
 
@@ -108,6 +115,8 @@ uk <- bind_rows(eng, scot, w, ni) %>%
                           levels = c("England", "Scotland", "Wales", "Northern Ireland")))
 uk
 ```
+
+
 
 ```{r}
 feather::write_feather(uk, "derived_data/uk.feather")
