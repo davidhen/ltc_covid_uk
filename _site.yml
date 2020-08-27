@@ -1,4 +1,5 @@
 name: "LTC COVID"
+output_dir: "docs"
 navbar:
   title: "LTC COVID"
   left:
@@ -16,3 +17,7 @@ navbar:
 output:
   html_document:
     theme: journal 
+    toc: true
+    toc_float: true
+    code_folding: hide
+    df_print: paged
