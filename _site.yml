@@ -16,3 +16,8 @@ navbar:
 output:
   html_document:
     theme: journal 
+    highlight: haddock
+    df_print: paged
+    code_folding: hide
+    toc: yes
+    toc_float: yes
