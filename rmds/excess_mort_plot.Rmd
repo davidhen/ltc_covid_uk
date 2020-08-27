@@ -82,7 +82,7 @@ england %<>%
                            labels = c("Hospital", "Care Home", "Home", "Other"))) %>% 
   mutate_at(.vars = c("week_number", "all", "covid"), as.integer)
 
-england
+my_datatable(england)
 ```
 
 # Scotland data
@@ -171,7 +171,7 @@ ch_death_covid %>%
   mutate(excess = all - average,
          country = "Scotland") -> sc
 
-sc
+my_datatable(sc)
 ```
 
 # Wales
@@ -195,7 +195,7 @@ wales %<>%
                            labels = c("Hospital", "Care Home", "Home", "Other"))) %>% 
   mutate_at(.vars = c("week_number", "all", "covid"), as.integer)
 
-wales
+my_datatable(wales)
 ```
 # Northern Ireland
 
@@ -247,8 +247,7 @@ ni <-
     select(-drop)
 
 
-ni %>% 
-  mutate(pct_increase = excess/average*100)
+my_datatable(ni)
 ```
 
 
@@ -264,7 +263,7 @@ uk %>%
 ```
 
 ```{r}
-uk
+my_datatable(uk)
 ```
 
 
@@ -300,7 +299,8 @@ ggsave("plots/fig_uk_excess.png", fig_uk_excess, width = 12, height = 9, dpi = 3
 ```{r}
 uk %>% 
   mutate(pct_change = (excess / average * 100)) %>% 
-  arrange(country, location, week_number)
+  arrange(country, location, week_number) %>% 
+  my_datatable(.)
 ```
 
 
@@ -342,7 +342,8 @@ uk %>%
             average = sum(average), 
             excess = all - average) %>% 
   mutate(pct_change = (excess / average * 100)) %>% 
-  arrange(location)
+  arrange(location) %>% 
+  my_datatable(.)
 ```
 
 
@@ -374,7 +375,8 @@ uk %>%
   summarise(all = sum(all),
             average = sum(average), 
             excess = all - average) %>% 
-  mutate(pct_change = (excess / average * 100))
+  mutate(pct_change = (excess / average * 100)) %>% 
+  my_datatable(.)
 ```
 
 
@@ -426,98 +428,19 @@ uk %>%
   summarise(all = sum(all),
             average = sum(average), 
             excess = all - average) %>% 
-  mutate(pct_change = (excess / average * 100))
-```
-
-
-
-
-
-```{r}
-uk %>% 
-  group_by(country, week_number) %>%  
-  summarise(all_nc = sum(non_covid),
-            average = sum(average), 
-            excess = all_nc - average) %>%
   mutate(pct_change = (excess / average * 100)) %>% 
-  ggplot(aes(week_number, pct_change, colour = country)) +
-  geom_point(size = 1.3) +
-  geom_line(size = 1.3) +
-  scale_colour_ptol() +
-  scale_y_continuous(limits = c(-30, 40),
-                     breaks = scales::pretty_breaks(),
-                     labels = scales::percent_format(scale = 1)) +
-  scale_x_continuous(breaks = scales::pretty_breaks(n = 12)) +
-  theme(legend.position = "top") +
-  labs(x = "Week number",
-       y = "% change from 5-yr average",
-       colour = "") 
+  my_datatable(.)
 ```
 
 
-# Wales *residents* excess deaths
-
-Data from [here](https://gov.wales/notifications-deaths-residents-related-covid-19-adult-care-homes-1-march-14-august-2020) downloaded 20th August 2020
 
 ```{r}
-temp_3 <- tempfile()
-source <- "https://gov.wales/sites/default/files/statistics-and-research/2020-08/notifications-of-deaths-of-residents-related-to-covid-19-in-adult-care-homes-1-march-to-14-august-2020-381.ods"
-
-curl_download(url = source, destfile = temp_3)
-
-ciw_data <- read_ods(file.path(temp_3), sheet = 7, skip = 3, col_names = TRUE)
-```
-
-```{r}
-ciw_data %>% 
-  rename(date = "") %>%
-  select(date, Total) %>% 
-  mutate(date = dmy(date)) %>% 
-  filter(date >= ymd(20200309) & date <= ymd(20200628)) %>% 
-  mutate(week_number = rep(11:26, each = 7)) %>% 
-  group_by(week_number) %>% 
-  summarise(total = sum(Total)) -> ciw_deaths
-
-
-uk %>% 
-  filter(country == "Wales" & location == "Care Home") %>% 
-  left_join(., ciw_deaths) %>% 
-  mutate(diff = total - all) -> wales_ch
-
-
-wales_ch %>% 
-  select(week_number, 
-         `In Care Homes` = all, 
-         `Care Home Residents` = total) %>% 
-  pivot_longer(`In Care Homes`:`Care Home Residents`,
-               names_to = "Count", values_to = "n") %>% 
-  ggplot(aes(week_number, n, colour = Count)) +
-  geom_point(size = 3) +
-  geom_line(size = 1.5) +
-  scale_colour_ptol(guide = guide_legend(keywidth = 2)) +
-  scale_x_continuous(breaks = scales::pretty_breaks(n = 22)) +
-  theme(legend.position = "top",
-        plot.margin = margin(3,15,3,3,"mm")) +
-  labs(title = "Difference between Deaths in Care Homes\nand Deaths of Care Home residents",
-       x = "Week number",
-       y = "",
-       fill = "") +
-  coord_cartesian(clip = "off") -> for_sion
-for_sion
-```
-
-```{r, eval=FALSE, echo=FALSE}
-ggsave("plots/for_sion.png", for_sion, width = 12, height = 9, dpi = 300)
+devtools::session_info()
 ```
 
 
 
-# Data table
 
-Click on the CSV button to download the wrangled dataset..
 
-```{r}
-#my_datatable(uk)
-```
 
 
