@@ -105,7 +105,7 @@ uk_deaths_data %>%
   group_by(week_number) %>% 
   summarise(tot_deaths = sum(covid_deaths)) %>% 
   ggplot(aes(week_number, tot_deaths)) +
-  geom_line(colour = ptol_pal()(1)) +
+  geom_line(colour = wsj_pal()(1)) +
   scale_x_continuous(breaks = scales::pretty_breaks(n = 12)) +
   scale_y_continuous(breaks = scales::pretty_breaks(),
                      limits = c(0, 10000)) +
@@ -134,7 +134,7 @@ uk_deaths_data %>%
 uk_deaths_data %>% 
   ggplot(aes(week_number, deaths_100000, colour = country)) +
   geom_line(size = 1.2) +
-  scale_colour_ptol() +
+  scale_colour_wsj() +
   scale_x_continuous(breaks = scales::pretty_breaks(n = 12)) +
   scale_y_continuous(breaks = scales::pretty_breaks()) +
   theme(legend.position = "top") +
@@ -226,7 +226,7 @@ uk %>%
   ggplot(aes(fct_rev(country), `Care homes beds`, colour = country)) +
   geom_violin(alpha = 0.5) +
   geom_boxplot(width = 0.2) +
-  scale_colour_ptol() +
+  scale_colour_wsj() +
   theme(legend.position = "none",
         plot.caption = element_text(size = 12)) +
   coord_flip() +
