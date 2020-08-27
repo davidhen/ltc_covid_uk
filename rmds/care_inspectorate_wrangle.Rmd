@@ -22,9 +22,9 @@ This file shows the wrangling to raw files taken from:
   
 These files are used to summarise the number of care homes in each nation and to calculate the total number of beds available. 
 
-## Packages
+## Software
 
-R packages required.....
+R packages required and helper functions
 
 ```{r}
 library(tidyverse)
@@ -45,8 +45,9 @@ my_datatable <- function(x){
 ```
 
 
-# Care Home size
+## Read in raw data
 
+These files are stored locally (the English data is quite big) and are available on [the project GitHub pages](https://github.com/davidhen/ltc_covid_uk) in the `raw_data` folder.
 
 ```{r}
 eng <- read_xlsx(here("raw_data/ENGLAND_care_homes.xlsx"), sheet = "HSCA Active Locations")
@@ -56,20 +57,29 @@ w <- read_xlsx(here("raw_data/22 - CIW - 20200730 - list of adult care homes in 
                range = "A4:K1060")
 ```
 
+# Wrangle
+
+## England
+
+The ... data contains a lot of information, not just about care homes. For our purposes we will filter using the convenient `Care home?` variable and also to include services that come under the bracket of "Adult social care". We then keep only the required variables and drop the rest before adding a `country` variable to indicate this is English data. 
+
 ```{r}
 eng %<>% 
   filter(`Care home?` == "Y" & 
            `Location Inspection Directorate` == "Adult social care") %>% 
   select(`Location Name`, `Care homes beds`, `Service user band - Older People`) %>%
-  #filter(!is.na(`Service user band - Older People`))
   mutate(country = "England")
 my_datatable(eng)
 ```
 
+## Scotland
+
+A similar story with the Scottish Care Inspectorate data. This time we use the "Care Home Service" and keep all service subtypes except "Children & Young People" and drop all inactive services. Again we add the `country` variable.
+
 ```{r}
 scot %<>% 
   filter(CareService == "Care Home Service" & 
-           Subtype %nin% c("Children & Young People" ) &
+           Subtype %nin% "Children & Young People" &
            ServiceStatus == "Active") %>% 
   select(`Location Name` = ServiceName, 
          `Care homes beds` = TotalBeds, Subtype) %>% 
@@ -77,21 +87,23 @@ scot %<>%
 my_datatable(scot)
 ```
 
+## Northern Ireland
+
+This time keep all Nursing home and Residential home categories and add the `country` variable. 
+
 ```{r}
 ni %<>% 
   filter(Category %in% c("Nursing (NH)", "Residential (RC)")) %>%
-  #filter(str_detect(`Categories of Care`, "I") | 
-           #str_detect(`Categories of Care`, "E") |
-           #str_detect(`Categories of Care`, "DE") |
-          # str_detect(`Categories of Care`, "MP(E)") |
-          # str_detect(`Categories of Care`, "LD(E)") |
-          # str_detect(`Categories of Care`, "PH(E)")) %>% 
   select(`Location Name` = ServiceName,
          `Care homes beds` = `Max Approved Places`,
          `Categories of Care`) %>% 
   mutate(country = "Northern Ireland")
 my_datatable(ni)
 ```
+
+## Wales
+
+Data here is a little more sparse, we just drop the uneeded variables from the Care Inspectorate Wales file. 
 
 ```{r}
 w %<>% 
@@ -103,7 +115,9 @@ my_datatable(w)
 ```
 
 
+# Join
 
+Now we create a `uk` dataframe by binding the previous 4 files together and then coercing the `country` varaible to a factor to make it play better with plots. 
 
 ```{r}
 uk <- bind_rows(eng, scot, w, ni) %>% 
@@ -112,9 +126,11 @@ uk <- bind_rows(eng, scot, w, ni) %>%
 my_datatable(uk)
 ```
 
+## Save
 
+This object is now written to a `derived_data` folder so we can load it in to another file and start analysing. 
 
-```{r}
+```{r, eval=FALSE}
 feather::write_feather(uk, here("derived_data/uk.feather"))
 ```
 
