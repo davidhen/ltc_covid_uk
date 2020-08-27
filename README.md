@@ -10,5 +10,4 @@ The Rmarkdown file entitled "ltc_covid_uk_code.Rmd" contains code for Figures 1,
 
 Code and tables relevant to excess mortality (Figures 5 & 6) are found in "excess_mort_plot.Rmd"
 
-Html versions of these files can be downloaded and viewed in any web browser if desired.
 

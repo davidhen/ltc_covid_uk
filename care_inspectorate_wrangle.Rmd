@@ -10,6 +10,8 @@ output:
     code_folding: hide
     toc: yes
     toc_float: yes
+  md_document:
+    variant: markdown_github
 ---
 
 ```{r setup, include=FALSE}
