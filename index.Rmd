@@ -2,9 +2,17 @@
 title: "COVID-19 mortality and long-term care: a UK comparison"
 ---
     
-Code to accompany the report "COVID-19 mortality and long-term care: a UK comparison"
+Code to accompany the report published by the International Long-Term Care Policy Network [here](https://ltccovid.org/country-reports-on-covid-19-and-long-term-care/)
 
 Authors: David Bell, Adelina Comas-Heras, David Henderson, Siôn Jones, Elizabeth Lemmon, Mirko Moro, Siobhán Murphy, Dermot O'Reilly, Pietro Patrignani. 
 
-Report published by the International Long-Term Care Policy Network [here](https://ltccovid.org/country-reports-on-covid-19-and-long-term-care/)
+## Information
+
+The code used to create plots and summary figures for the above report are available here from the links at the top of the page. 
+
+* File 1 shows the wrangling of data from each nation's care inspectorate body to enable further analysis in file 2
+* File 2 details code to produce Figures 1-3 and some summary statistics for table 1 in the report
+* File 3 shows code and summary statistics for the Excess deaths section of the report (Figures 5 and 6)
+
+
 

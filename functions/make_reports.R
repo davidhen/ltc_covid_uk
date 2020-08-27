@@ -38,6 +38,10 @@ report <- function(rmd, n_file, open_file = TRUE,
     output_format = html_document(
       toc = TRUE,
       toc_depth = 1,
+      toc_float = TRUE,
+      theme = "journal",
+      highlight = "haddock",
+      df_print = "paged",
       code_folding = "hide"
     ),
     output_file = file_name,

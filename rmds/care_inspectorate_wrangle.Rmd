@@ -1,17 +1,7 @@
 ---
-title: "Derived data"
+title: "File 1"
 author: "David Henderson"
-date: "13/07/2020"
-output: 
-  html_document:
-    theme: journal
-    highlight: haddock
-    df_print: paged
-    code_folding: hide
-    toc: yes
-    toc_float: yes
-  md_document:
-    variant: markdown_github
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
 ---
 
 ```{r setup, include=FALSE}
@@ -20,11 +10,17 @@ knitr::opts_chunk$set(echo = TRUE,
                       warning = FALSE, message = FALSE)
 ```
 
+# [HOME PAGE](https://davidhen.github.io/ltc_covid_uk/index.html)
+
 # Introduction
 
-There are issues with uploading raw data to RStudio.cloud. As a work around I am going to create a simplified data object to create the care home size boxplot. This is a hacky workaround.  
-
-**Note, this RMD won't knit in RStudio cloud or on any machine other than David Henderson's. The raw data files are too big for Rstudio.cloud to handle so I ran this code locally and saved smaller data objects that could be imported into the `ltc_covid_uk.Rmd` file from the `derived_data` folder. As I said - pretty hacky**
+This file shows the wrangling to raw files taken from: 
+  1. The English place
+  2. The Scottish one
+  3. The Welsh one
+  4. You guessed it...
+  
+These files are used to summarise the number of care homes in each nation and to calculate the total number of beds available. 
 
 ## Packages
 

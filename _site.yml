@@ -5,16 +5,17 @@ navbar:
   left:
     - text: "Home"
       href: index.html
-    - text: "Care inspectorate wrangle"
+    - text: "File 1"
       href: care_inspectorate_wrangle.html
-    - text: "Figures 1-3"
+    - text: "File 2"
       href: ltc_covid_uk_code.html
-    - text: "Excess mortality plots"
+    - text: "File 3"
       href: excess_mort_plot.html
-output:
+output: 
   html_document:
-    theme: journal 
-    toc: true
-    toc_float: true
-    code_folding: hide
+    theme: journal
+    highlight: haddock
     df_print: paged
+    code_folding: hide
+    toc: yes
+    toc_float: yes

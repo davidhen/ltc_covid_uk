@@ -1,15 +1,7 @@
 ---
-title: "UK comparison"
+title: "File 3"
 author: "David Henderson"
-date: "13/07/2020"
-output: 
-  html_document:
-    theme: journal
-    highlight: haddock
-    df_print: paged
-    code_folding: hide
-    toc: yes
-    toc_float: yes
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
 ---
 
 ```{r setup, include=FALSE}
@@ -17,6 +9,8 @@ knitr::opts_chunk$set(echo = TRUE,
                       fig.width = 12, fig.height = 9,
                       warning = FALSE, message = FALSE)
 ```
+
+[HOME PAGE](https://davidhen.github.io/ltc_covid_uk/index.html)
 
 # Introduction
 
