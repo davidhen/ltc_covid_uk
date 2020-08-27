@@ -14,5 +14,5 @@ The code used to create plots and summary figures for the above report are avail
 * File 2 details code to produce Figures 1-3 and some summary statistics for table 1 in the report
 * File 3 shows code and summary statistics for the Excess deaths section of the report (Figures 5 and 6)
 
-
+Raw code and data can be found [on the project GitHub page](https://github.com/davidhen/ltc_covid_uk)
 

@@ -10,11 +10,11 @@ knitr::opts_chunk$set(echo = TRUE,
                       warning = FALSE, message = FALSE)
 ```
 
-# [HOME PAGE](https://davidhen.github.io/ltc_covid_uk/index.html)
 
 # Introduction
 
 This file shows the wrangling to raw files taken from: 
+
   1. The English place
   2. The Scottish one
   3. The Welsh one
@@ -117,4 +117,11 @@ my_datatable(uk)
 ```{r}
 feather::write_feather(uk, here("derived_data/uk.feather"))
 ```
+
+# [HOME PAGE](https://davidhen.github.io/ltc_covid_uk/index.html)
+
+```{r}
+devtools::session_info()
+```
+
 

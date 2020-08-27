@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE,
                       warning = FALSE, message = FALSE)
 ```
 
-[HOME PAGE](https://davidhen.github.io/ltc_covid_uk/index.html)
+
 
 # Introduction
 
@@ -279,6 +279,8 @@ uk_deaths_data %>%
   my_datatable(.)
 ```
 
+
+# [HOME PAGE](https://davidhen.github.io/ltc_covid_uk/index.html)
 
 ```{r}
 devtools::session_info()

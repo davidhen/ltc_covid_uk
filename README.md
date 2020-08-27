@@ -4,10 +4,8 @@ Authors: David Bell, Adelina Comas-Heras, David Henderson, Siôn Jones, Elizabet
 
 Report published by the International Long-Term Care Policy Network [here](https://ltccovid.org/country-reports-on-covid-19-and-long-term-care/)
 
-# Notes
+Rendered html analysis files and plots can be found [on the project website](https://davidhen.github.io/ltc_covid_uk/index.html)
 
-The Rmarkdown file entitled "ltc_covid_uk_code.Rmd" contains code for Figures 1,2, and 3 in the report. Some data pre-processing for Figure 1 is contained in the file "care_inspectorate_wrangle.Rmd"
 
-Code and tables relevant to excess mortality (Figures 5 & 6) are found in "excess_mort_plot.Rmd"
 
 
