@@ -462,7 +462,7 @@ uk %>%
 
 # Combination plot Figure 6
 
-Using the `patchwork' package to combine together.
+Using the `patchwork` package to combine together.
 
 ```{r, fig.width=18, fig.height=18}
 (uk_excess + fig_excess_uk_2) / fig_uk_excess_1 +
