@@ -23,6 +23,8 @@ This file shows the wrangling to raw files taken from:
   
 These files are used to summarise the number of care homes in each nation and to calculate the total number of beds available. 
 
+Raw code can be downloaded by selecting the `Download Rmd` option from the `Code` drop down menu at the top of this page.
+
 ## Software
 
 R packages required and helper functions

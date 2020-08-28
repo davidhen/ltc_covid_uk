@@ -12,11 +12,11 @@ knitr::opts_chunk$set(echo = TRUE,
 ```
 
 
-
-
 # Introduction
 
 Code and values for Figures 4 and 5 in Section 4 of the report "Excess deaths"
+
+Raw code can be downloaded by selecting the `Download Rmd` option from the `Code` drop down menu at the top of this page.
 
 ## Software
 

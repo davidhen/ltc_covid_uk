@@ -17,6 +17,8 @@ knitr::opts_chunk$set(echo = TRUE,
 
 This file contains code used to create Figures 1, 2, and 3 and some values for Table 1. We also print out useful underlying data for the plots
 
+Raw code can be downloaded by selecting the `Download Rmd` option from the `Code` drop down menu at the top of this page.
+
 ## Software
 
 R packages and helper functions....
