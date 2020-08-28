@@ -8,7 +8,7 @@ Authors: David Bell, Adelina Comas-Heras, David Henderson, Siôn Jones, Elizabet
 
 ## Information
 
-The code used to create plots and summary figures for the above report are available here from the links at the top of the page. 
+The code used to create plots and summary figures for the above report are available here from the links under the Analysis menu at the top of the page. 
 
 * File 1 shows the wrangling of data from each nation's care inspectorate body to enable further analysis in file 2
 * File 2 details code to produce Figures 1-3 and some summary statistics for table 1 in the report

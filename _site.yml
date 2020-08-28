@@ -21,13 +21,3 @@ navbar:
       href: https://github.com/davidhen/ltc_covid_uk
     - icon: fa-twitter
       href: https://twitter.com/_davidhen
-output: 
-  html_document:
-    theme: journal
-    highlight: haddock
-    df_print: paged
-    code_folding: hide
-    toc: yes
-    toc_float: yes
-    include:
-      after_body: footer.html
