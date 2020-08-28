@@ -60,7 +60,7 @@ Figure 1 shows the distribution of care home size across the 4 nations with viol
 
 ## Load in data
 
-The data used to create this plot is derived from information from the relevant Care inspectorates in each nation. These files required some pre-processing which can be found in on [this page](https://davidhen.github.io/ltc_covid_uk/care_inspectorate_wrangle.html). The derived, combined, dataset is imaginatively called `uk` and is found in the `derived_data` folder as a `feather` object and can be found on the [project GitHub pages](https://github.com/davidhen/ltc_covid_uk).
+The data used to create this plot is derived from information from the relevant Care inspectorates in each nation. These files required some pre-processing which can be found in on [this page](https://davidhen.github.io/ltc_covid_uk/care_inspectorate_wrangle.html). The derived, combined, dataset is imaginatively called `uk` and is found in the `derived_data` folder as a `feather` object on the [project GitHub pages](https://github.com/davidhen/ltc_covid_uk).
 
 
 ```{r}

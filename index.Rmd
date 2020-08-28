@@ -16,3 +16,5 @@ The code used to create plots and summary figures for the above report are avail
 
 Raw code and data can be found [on the project GitHub page](https://github.com/davidhen/ltc_covid_uk)
 
+Plots on these pages (and saved on the project GitHub page) contain titles and captions unlike those used in the report which contains this infomation in-text.
+

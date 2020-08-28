@@ -11,6 +11,8 @@ navbar:
       href: ltc_covid_uk_code.html
     - text: "File 3"
       href: excess_mort_plot.html
+    - text: "License"
+      href: license.html
 output: 
   html_document:
     theme: journal
