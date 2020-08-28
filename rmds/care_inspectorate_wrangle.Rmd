@@ -59,7 +59,7 @@ w <- read_xlsx(here("raw_data/22 - CIW - 20200730 - list of adult care homes in 
                range = "A4:K1060")
 ```
 
-# Wrangle
+# Wrangle {.tabset}
 
 ## England
 
@@ -117,7 +117,7 @@ my_datatable(w)
 ```
 
 
-# Join
+## Combined
 
 Now we create a `uk` dataframe by binding the previous 4 files together and then coercing the `country` varaible to a factor to make it play better with plots. 
 
@@ -128,7 +128,7 @@ uk <- bind_rows(eng, scot, w, ni) %>%
 my_datatable(uk)
 ```
 
-## Save
+# Save
 
 This object is now written to a `derived_data` folder so we can load it in to another file and start analysing. 
 
