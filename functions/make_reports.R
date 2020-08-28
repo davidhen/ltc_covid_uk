@@ -44,7 +44,7 @@ report <- function(rmd, n_file, open_file = TRUE,
       df_print = "paged",
       code_folding = "hide",
       code_download = TRUE
-    ),
+      ),
     output_file = file_name,
     output_dir = report_dir,
     envir = new.env()
