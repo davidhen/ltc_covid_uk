@@ -95,7 +95,7 @@ ggsave(here("plots/fig_1.png"), fig_1, width = 12, height = 9, dpi = 300)
 ```
 
 
-# Calculate number of care homes and bed numbers
+# Calculate number of care homes and bed numbers {.tabset}
 
 Some useful summary figures which contribute to Table 1 in the report
 
@@ -139,11 +139,11 @@ uk %>%
 
 **Note 10 care homes in Scotland do not provide `total_beds` figures.**
 
-# Figures 2 & 3 deaths per 100,000 
+# Deaths per 100,000 {.tabset}
 
-## Data
+## Data 
 
-Data for Figure 2 *&* 3 is sourced from the ONS Deaths registered in England and Wales available [here](https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/weeklyprovisionalfiguresondeathsregisteredinenglandandwales)
+Data for Figures 2 & 3 is sourced from the ONS Deaths registered in England and Wales available [here](https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/datasets/weeklyprovisionalfiguresondeathsregisteredinenglandandwales)
 
 To calculate per 100,000 estimates we used population estimates from [here](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatesforukenglandandwalesscotlandandnorthernireland) and crudely added them in manually in the code as seen below.
 
@@ -215,21 +215,9 @@ fig_2
 ggsave(here("plots/fig_2.png"), fig_2, width = 12, height = 9, dpi = 300)
 ```
 
+## Figure 3 Deaths per 100k
 
-## Calculate total COVID-19 deaths in period
-
-A figure referenced in the text of the report
-
-```{r}
-uk_deaths_data %>% 
-  summarise(total_deaths = sum(covid_deaths)) 
-```
-
-
-
-## Figure 3
-
-Deaths per 100,000 by UK nation. Using same data as above.
+Same data as before but plotting per 100k figures now as opposed to absolute numbers.
 
 ```{r}
 uk_deaths_data %>% 
@@ -252,7 +240,19 @@ fig_3
 ggsave(here("plots/fig_3.png"), fig_3, width = 12, height = 9, dpi = 300)
 ```
 
-## per 100,000 values by nations
+
+# Summary figures {.tabset}
+
+## Total deaths
+
+A figure referenced in the text of the report - total COVID-19 deaths Weeks 11-26
+
+```{r}
+uk_deaths_data %>% 
+  summarise(total_deaths = sum(covid_deaths)) 
+```
+
+## per 100k by nation
 
 Useful summary figures
 
@@ -266,9 +266,10 @@ uk_deaths_data %>%
   round_df() %>% 
   my_datatable(.)
 ```
+
 ## UK per 100k
 
-More useful summary figs
+More useful summary figures
 
 ```{r}
 uk_deaths_data %>% 
