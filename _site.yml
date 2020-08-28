@@ -5,12 +5,15 @@ navbar:
   left:
     - text: "Home"
       href: index.html
-    - text: "File 1"
-      href: care_inspectorate_wrangle.html
-    - text: "File 2"
-      href: ltc_covid_uk_code.html
-    - text: "File 3"
-      href: excess_mort_plot.html
+    - text: "Analysis"
+      icon: fa-gear
+      menu: 
+        - text: "File 1"
+          href: care_inspectorate_wrangle.html
+        - text: "File 2"
+          href: ltc_covid_uk_code.html
+        - text: "File 3"
+          href: excess_mort_plot.html
     - text: "License"
       href: license.html
   right:
