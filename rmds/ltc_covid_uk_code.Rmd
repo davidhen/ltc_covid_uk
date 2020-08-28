@@ -81,14 +81,16 @@ uk %>%
   theme(legend.position = "none",
         plot.caption = element_text(size = 12)) +
   coord_flip() +
-  labs(x = "",
+  labs(title = "Distribution of care home size",
+       subtitle = "(care homes for all adults)",
+       x = "",
        y = "Number of care home beds",
-       caption = "Outer line indicates distribution\nStrong vertical line in box indicates the median\nBox limits indicate 25th and 75th percentile\nDots indicate statistical outliers") -> fig_1
+       caption = "Outer line indicates distribution\nStrong vertical line in box indicates the median\nBox limits indicate 25th and 75th percentile\nDots indicate statistical outliers\nSources: Care Quality Commission England, Care Inspectorate Scotland,\n Regulation and Quality Improvement Authority Northern Ireland, and the Care Inspectorate Wales\nCode:https://github.com/davidhen/ltc_covid_uk") -> fig_1
 fig_1
 ```
 
 ```{r, echo=FALSE, eval=FALSE}
-ggsave(here("plots/fig_4.png"), fig_1, width = 12, height = 9, dpi = 300)
+ggsave(here("plots/fig_1.png"), fig_1, width = 12, height = 9, dpi = 300)
 ```
 
 
@@ -103,21 +105,21 @@ This uses all data in the `uk` data object
 ```{r}
 uk %>% 
   group_by(country) %>% 
-  summarise(total_n = n(),
-            total_beds = sum(`Care homes beds`, na.rm = TRUE)) %>% 
-  mutate(total_n = as.numeric(total_n)) %>% 
+  summarise(total_number_of_homes = n(),
+            total_number_of_beds = sum(`Care homes beds`, na.rm = TRUE)) %>% 
+  mutate(total_number_of_beds = as.numeric(total_number_of_beds)) %>% 
   bind_rows(summarise_all(., funs(if(is.numeric(.)) sum(.) else "Total"))) %>% 
   my_datatable(.)
 ```
-*Note 15 care homes in Scotland do not provide `total_beds` figures.*
+**Note 15 care homes in Scotland do not provide `total_beds` figures.**
 
 ## Care Homes for older people
 
 Care Inspectorate for Wales does not classify care home type by older people so we must remove them from this summary. The code block below shows how we filtered the other nations data to include only care homes for older people. This is subjective and there is no clear documentation or metadata to aid with this. It is also important to note that some care homes may include a mix of older and younger clients.
 
-England: Filter on "Service User Band - Older people" option
-Scotland: using Subtypes "Older People" and "Respite Care and Short Breaks"
-Northern Ireland: Categories of care including the letters "I" or "DE" (this reflects how Quality Improvement Authority Northern Ireland subset)
+* England: Filter on "Service User Band - Older people" option  
+* Scotland: using Subtypes "Older People" and "Respite Care and Short Breaks"  
+* Northern Ireland: Categories of care including the letters "I" or "DE" (this reflects how Quality Improvement Authority Northern Ireland subset)
 
 ```{r}
 uk %>% 
@@ -129,12 +131,12 @@ uk %>%
       str_detect(`Categories of Care`, "DE") 
   )) %>% 
   group_by(country) %>% 
-  summarise(total_n = n(),
-            total_beds = sum(`Care homes beds`, na.rm = TRUE)) %>% 
+  summarise(total_number_of_homes = n(),
+            total_number_of_beds = sum(`Care homes beds`, na.rm = TRUE)) %>% 
   my_datatable(.)
 ```
 
-*Note 10 care homes in Scotland do not provide `total_beds` figures.*
+**Note 10 care homes in Scotland do not provide `total_beds` figures.**
 
 # Figures 2 & 3 deaths per 100,000 
 
@@ -188,7 +190,7 @@ uk_deaths_data %>%
 
 ## Figure 2 Overall deaths
 
-Basic plot of the total number of deaths in each week
+Using the `uk_deaths_data` object we can summarise and plot out the number of deaths in the whole UK in each week.
 
 ```{r}
 uk_deaths_data %>% 
@@ -204,12 +206,12 @@ uk_deaths_data %>%
   labs(title = "Weekly deaths attributed to COVID-19 in the UK",
        x = "Week number",
        y = "",
-       caption = "Source:ONS Deaths registered in England and Wales, UK deaths\nCode:https://github.com/davidhen/ltc_covid_uk") -> fig_1
-fig_1
+       caption = "Source:ONS Deaths registered in England and Wales, UK deaths\nCode:https://github.com/davidhen/ltc_covid_uk") -> fig_2
+fig_2
 ```
 
 ```{r, echo=FALSE, eval=FALSE}
-ggsave("plots/fig_1.png", fig_1, width = 12, height = 9, dpi = 300)
+ggsave(here("plots/fig_2.png"), fig_2, width = 12, height = 9, dpi = 300)
 ```
 
 
@@ -219,8 +221,7 @@ A figure referenced in the text of the report
 
 ```{r}
 uk_deaths_data %>% 
-  summarise(tot_deaths = sum(covid_deaths)) %>% 
-  my_datatable(.)
+  summarise(total_deaths = sum(covid_deaths)) 
 ```
 
 
@@ -242,12 +243,12 @@ uk_deaths_data %>%
        x = "Week number",
        y = "", 
        colour = "",
-       caption = "Source:ONS Deaths registered in England and Wales, UK deaths\nCode:https://github.com/davidhen/ltc_covid_uk") -> fig_2
-fig_2
+       caption = "Source:ONS Deaths registered in England and Wales, UK deaths\nCode:https://github.com/davidhen/ltc_covid_uk") -> fig_3
+fig_3
 ```
 
 ```{r, echo=FALSE, eval=FALSE}
-ggsave("plots/fig_2.png", fig_2, width = 12, height = 9, dpi = 300)
+ggsave(here("plots/fig_3.png"), fig_3, width = 12, height = 9, dpi = 300)
 ```
 
 ## per 100,000 values by nations
@@ -261,6 +262,7 @@ uk_deaths_data %>%
             pop = pop) %>% 
   distinct() %>% 
   mutate(total_per_100k = covid_deaths/pop * 100000) %>% 
+  round_df() %>% 
   my_datatable(.)
 ```
 ## UK per 100k
@@ -275,13 +277,14 @@ uk_deaths_data %>%
   distinct() %>% 
   ungroup() %>% 
   summarise(covid_deaths = sum(covid_deaths),
-            pop = sum(pop)) %>% 
-  mutate(uk_death_100k = covid_deaths/pop * 100000) %>% 
-  my_datatable(.)
+            uk_pop = sum(pop)) %>% 
+  mutate(total_uk_deaths_100k = covid_deaths/uk_pop * 100000)
 ```
 
 
 # [HOME PAGE](https://davidhen.github.io/ltc_covid_uk/index.html)
+
+# Session Information
 
 ```{r}
 devtools::session_info()
