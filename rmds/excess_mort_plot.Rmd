@@ -7,28 +7,30 @@ date: '`r format(Sys.Date(), "%B %d, %Y")`'
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
                       fig.width = 12, fig.height = 9,
-                      warning = FALSE, message = FALSE)
+                      warning = FALSE, message = FALSE,
+                      class.source="bg-success")
 ```
+
 
 
 
 # Introduction
 
-1st attempt to combine data from all 4 UK nations to look at excess deaths in 2020 by week and location of death. The main idea of this file is to show co-authors what we are hoping to get as an output. This may not be possible. As you will see here, the data for E & W is combined and we don't have NI data yet. 
+Code and values for Figures 4 and 5.
 
-## Packages
+## Software
 
-R packages required.....
+R packages and required helper functions.
 
 ```{r, warning=FALSE, message=FALSE}
 library(tidyverse)
 library(curl)
 library(readxl)
-library(readODS)
 library(lubridate)
 library(forcats)
 library(patchwork)
 library(ggthemes)
+library(socviz)
 library(here)
 
 #Helper function
@@ -56,9 +58,11 @@ here()
 ```
 
 
-# England data
+# Data {.tabset}
 
-Data provided sourced from [here](https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/causesofdeath/datasets/deathregistrationsandoccurrencesbylocalauthorityandhealthboard) and [here](https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/adhocs/11826fiveyearaverageweeklydeathsbylocalauthorityandplaceofoccurrenceenglandandwalesdeathsregistered2015to2019) and collated into `.csv` files by Pietro. I have saved this file in the `excess_mort_data` folder.
+## England
+
+Data sourced from [here](https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/causesofdeath/datasets/deathregistrationsandoccurrencesbylocalauthorityandhealthboard) and [here](https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths/adhocs/11826fiveyearaverageweeklydeathsbylocalauthorityandplaceofoccurrenceenglandandwalesdeathsregistered2015to2019) and collated into `.csv` files by Pietro Patrignani. I have saved this file in the `excess_mort_data` folder available on the [project GitHub repository](https://github.com/davidhen/ltc_covid_uk).
 
 ```{r}
 england <- read_csv(here("excess_mort_data/Weekly Summary England.csv"))
@@ -80,9 +84,9 @@ england %<>%
 my_datatable(england)
 ```
 
-# Scotland data
+## Scotland
 
-This comes from two files on the NRS site. One has weekly COIVD and all-cause deaths, the other the weekly numbers (including averages) for the previous 5 years.
+This comes from two files on the National Records of Scotland (NRS) site. One has weekly COIVD and all-cause deaths, the other the weekly numbers (including averages) for the previous 5 years. URLs are shown in the code chunk. The data is downloaded directly evertime this chunk is run.
 
 ```{r, warning=FALSE, message=FALSE}
 temp_1 <- tempfile()
@@ -166,10 +170,12 @@ ch_death_covid %>%
   mutate(excess = all - average,
          country = "Scotland") -> sc
 
-my_datatable(sc)
+sc %>% 
+  round_df(.) %>% 
+  my_datatable(.)
 ```
 
-# Wales
+## Wales
 
 Same source as England data. Also wrangled into a `.csv` by Pietro.
 
@@ -192,11 +198,13 @@ wales %<>%
 
 my_datatable(wales)
 ```
-# Northern Ireland
 
-Multisheet Excel file via Siobhán. Needs some wrangling....
+## Northern Ireland
+
+Multisheet Excel file via Siobhán Murphy as requested and provided direct from the Northern Ireland Statistics and Research Agency (NISRA) who are keen to highlight these figures are provisional. Also need to point out here the figures we got from NISRA don't break down by COVID/non-COVID deaths. Needs some wrangling....
 
 ```{r}
+#Start with hospital deaths on sheet 3
 ni_hosp <- read_xlsx(here("excess_mort_data/NI results_revised.xlsx"), sheet = 3, 
                     range = "A2:I18") %>% 
   mutate(location = "Hospital") %>% 
@@ -206,7 +214,7 @@ ni_hosp <- read_xlsx(here("excess_mort_data/NI results_revised.xlsx"), sheet = 3
          average = Average,
          excess)
  
-
+#Now ingest care home data - sheet 2
 ni_ch <- read_xlsx(here("excess_mort_data/NI results_revised.xlsx"), sheet = 2,
                    range = "A2:I18") %>% 
   mutate(location = "Care Home") %>% 
@@ -216,6 +224,7 @@ ni_ch <- read_xlsx(here("excess_mort_data/NI results_revised.xlsx"), sheet = 2,
          average = Average,
          excess)
 
+#Home deaths - sheet 4
 ni_home <- read_xlsx(here("excess_mort_data/NI results_revised.xlsx"), sheet = 4,
                      range = "A2:I18") %>% 
   mutate(location = "Home") %>% 
@@ -225,6 +234,7 @@ ni_home <- read_xlsx(here("excess_mort_data/NI results_revised.xlsx"), sheet = 4
          average = Average,
          excess)
 
+#And other place of death - sheet 5
 ni_other <-  read_xlsx(here("excess_mort_data/NI results_revised.xlsx"), sheet = 5,
                      range = "A2:I18") %>% 
   mutate(location = "Other") %>% 
@@ -234,6 +244,7 @@ ni_other <-  read_xlsx(here("excess_mort_data/NI results_revised.xlsx"), sheet =
          average = Average,
          excess)
 
+#Join these objects together
 ni <- 
   bind_rows(ni_hosp, ni_ch, ni_home, ni_other) %>% 
   mutate(country = "Northern Ireland") %>% 
@@ -246,7 +257,9 @@ my_datatable(ni)
 ```
 
 
-# Join together
+## Combined
+
+With each nations data now wrangled into the same format we can join them all together into one object - `uk`.
 
 ```{r}
 uk <- bind_rows(england, sc, wales, ni)
@@ -254,17 +267,68 @@ uk <- bind_rows(england, sc, wales, ni)
 uk %>%
   mutate(country = factor(country, 
                           levels = c("England", "Scotland", 
-                                     "Wales", "Northern Ireland"))) -> uk
-```
-
-```{r}
+                                     "Wales", "Northern Ireland"))) %>% 
+  select(country, everything()) -> uk
 my_datatable(uk)
 ```
 
+# Weekly P-score by Nation {.tabset}
 
-# Plot
+No we have all the information combined in the `uk` object we can start plotting. Firstly the weekly excess by nation.
 
-This is the sort of plot we want as an end result, but with 4 nations....
+## Plot
+
+```{r}
+fig_5 <- 
+  uk %>% 
+  group_by(country, week_number) %>%  
+  summarise(all = sum(all),
+            average = sum(average), 
+            excess = all - average) %>% 
+  mutate(pct_change = (excess / average * 100)) %>% 
+  ggplot(aes(week_number, pct_change, colour = country)) +
+  geom_point(size = 1.5) +
+  geom_line(size = 1.5) +
+  scale_colour_wsj(guide = guide_legend(keywidth = 2)) +
+  scale_y_continuous(limits = c(-15, 120),
+                     breaks = scales::pretty_breaks(n = 6),
+                     labels = scales::percent_format(scale = 1)) +
+  scale_x_continuous(breaks = scales::pretty_breaks(n = 12)) +
+  theme(legend.position = "top") +
+  labs(title = "Weeekly excess mortality in the UK.",
+       subtitle = "Weeks 11-26 2020",
+       x = "Week number",
+       y = "% change from 5-yr average",
+       colour = "",
+       caption = "Source: ONS, NRS & NISRA\nFigures are provisional\nCode:https://github.com/davidhen/ltc_covid_uk") 
+
+fig_5
+```
+
+```{r, eval=FALSE, echo=FALSE}
+ggsave(here("plots/fig_5.png"), fig_5, width = 12, height = 9, dpi = 300)
+```
+
+## Table
+
+```{r}
+uk %>% 
+  group_by(country, week_number) %>%  
+  summarise(all = sum(all),
+            average = sum(average), 
+            excess = all - average) %>% 
+  mutate(pct_change = (excess / average * 100)) %>% 
+  round_df(.) %>% 
+  my_datatable(.)
+```
+
+
+
+# P Score Breakdown plot
+
+Figure 5 is a combination of 3 plots. First we show the individual plots and underlying tables
+
+
 
 ```{r}
 fig_uk_excess_1 <- 

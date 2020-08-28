@@ -7,7 +7,8 @@ date: '`r format(Sys.Date(), "%B %d, %Y")`'
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
                       fig.width = 12, fig.height = 9,
-                      warning = FALSE, message = FALSE)
+                      warning = FALSE, message = FALSE,
+                      class.source="bg-success")
 ```
 
 
