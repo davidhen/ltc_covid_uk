@@ -18,3 +18,11 @@ Raw code and data can be found [on the project GitHub page](https://github.com/d
 
 Plots on these pages (and saved on the project GitHub page) contain titles and captions unlike those used in the report which contains this infomation in-text.
 
+![](assets/ilpn_logo_text_400x126.png){width=250px}
+![](assets/SCADR Logo_Primary_Full Colour_HI.png){width=250px}
+![](assets/Edinburgh_Napier_Uni_Logo_Small_730_290_80.jpg){width=250px}
+![](assets/University_of_Edinburgh-Logo.wine.png){width=250px}
+![](assets/london-economics-logo.png){width=250px}
+![](assets/qub_logo.jpg){width=250px}
+![](assets/cropped-LSE-Logo_Master-File_RGB_Txt_Blk_e0112b.png){width=250px}
+![](assets/stirling.png){width=250px}
