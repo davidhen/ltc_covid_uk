@@ -15,10 +15,10 @@ knitr::opts_chunk$set(echo = TRUE,
 
 This file shows the wrangling to raw files taken from: 
 
-  1. The English place
-  2. The Scottish one
-  3. The Welsh one
-  4. You guessed it...
+  1. The Care Quality Commission (England) available [here](https://www.cqc.org.uk/about-us/transparency/using-cqc-data#directoryCommis)
+  2. The Care Inspectorate Scotland available [here](https://www.careinspectorate.com/index.php/publications-statistics/93-public/datastore)
+  3. The Care Inspectorate Wales (We obtained up-to-date information directly from CIW accurate as at 30th July 2020. 2018 data can be accessed [here](https://statswales.gov.wales/Catalogue/Health-and-Social-Care/Services-for-Social-Care-and-Childrens-Day-Care/cssiwservicesandplaces-by-setting-year))
+  4. The Regulation and Quality Improvement Authority (Northern Ireland) available [here](https://www.rqia.org.uk/what-we-do/register/services-registered-with-rqia/)
   
 These files are used to summarise the number of care homes in each nation and to calculate the total number of beds available. 
 
@@ -48,7 +48,7 @@ here()
 
 ## Read in raw data
 
-These files are stored locally (the English data is quite big) and are available on [the project GitHub pages](https://github.com/davidhen/ltc_covid_uk) in the `raw_data` folder.
+These files are stored locally (the English data is quite big) and are available on [the project GitHub pages](https://github.com/davidhen/ltc_covid_uk) in the `raw_data` folder. 
 
 ```{r}
 eng <- read_xlsx(here("raw_data/ENGLAND_care_homes.xlsx"), sheet = "HSCA Active Locations")
@@ -62,7 +62,7 @@ w <- read_xlsx(here("raw_data/22 - CIW - 20200730 - list of adult care homes in 
 
 ## England
 
-The ... data contains a lot of information, not just about care homes. For our purposes we will filter using the convenient `Care home?` variable and also to include services that come under the bracket of "Adult social care". We then keep only the required variables and drop the rest before adding a `country` variable to indicate this is English data. 
+The Care Quality Commission data contains a lot of information, not just about care homes. For our purposes we will filter using the convenient `Care home?` variable and also to include services that come under the bracket of "Adult social care". We then keep only the required variables and drop the rest before adding a `country` variable to indicate this is English data. 
 
 ```{r}
 eng %<>% 
@@ -104,7 +104,7 @@ my_datatable(ni)
 
 ## Wales
 
-Data here is a little more sparse, we just drop the uneeded variables from the Care Inspectorate Wales file. 
+Data here is a little more sparse, we just drop the uneeded variables from the Care Inspectorate Wales file. CIW no longer distinguish between care homes for older and younger adults due to a change in the registrations process.
 
 ```{r}
 w %<>% 
