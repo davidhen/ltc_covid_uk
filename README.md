@@ -2,7 +2,7 @@
 
 Authors: David Bell, Adelina Comas-Heras, David Henderson, Siôn Jones, Elizabeth Lemmon, Mirko Moro, Siobhán Murphy, Dermot O'Reilly, Pietro Patrignani. 
 
-Report published by the International Long-Term Care Policy Network [here](https://ltccovid.org/country-reports-on-covid-19-and-long-term-care/)
+Report published by the International Long-Term Care Policy Network [here](https://ltccovid.org/2020/08/28/covid-19-mortality-and-long-term-care-a-uk-comparison/)
 
 Rendered html analysis files and plots can be found [on the project website](https://davidhen.github.io/ltc_covid_uk/index.html)
 
