@@ -45,7 +45,7 @@ my_datatable <- function(x){
                                                           buttons = c("csv")))
 }
 #Set base directory
-here()
+set_here(verbose = FALSE)
 ```
 
 

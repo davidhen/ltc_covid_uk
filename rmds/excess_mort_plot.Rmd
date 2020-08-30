@@ -54,7 +54,7 @@ theme_set(theme_minimal(base_family = "Roboto", base_size = 20) +
 options(scipen = 10,
         digits = 1)
 #Set base directory
-here()
+set_here(verbose = FALSE)
 ```
 
 
