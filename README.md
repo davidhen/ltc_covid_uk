@@ -1,6 +1,6 @@
 # Code to accompany the report "COVID-19 mortality and long-term care: a UK comparison"
 
-Authors: David Bell, Adelina Comas-Heras, David Henderson, Siôn Jones, Elizabeth Lemmon, Mirko Moro, Siobhán Murphy, Dermot O'Reilly, Pietro Patrignani. 
+Authors: David Bell, Adelina Comas-Herrera, David Henderson, Siôn Jones, Elizabeth Lemmon, Mirko Moro, Siobhán Murphy, Dermot O'Reilly, Pietro Patrignani. 
 
 Report published by the International Long-Term Care Policy Network [here](https://ltccovid.org/2020/08/28/covid-19-mortality-and-long-term-care-a-uk-comparison/)
 
