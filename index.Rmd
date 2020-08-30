@@ -23,6 +23,8 @@ Plots on these pages (and saved on the project GitHub page) contain titles and c
 ![](assets/SCADR Logo_Primary_Full Colour_HI.png){width=200px}
 ![](assets/Edinburgh_Napier_Uni_Logo_Small_730_290_80.jpg){width=200px}
 ![](assets/University_of_Edinburgh-Logo.wine.png){width=200px}
+![](assets/EHE_logo_default.jpeg){width=200px}
+
 ![](assets/london-economics-logo.png){width=200px}
 ![](assets/qub_logo.jpg){width=200px}
 ![](assets/cropped-LSE-Logo_Master-File_RGB_Txt_Blk_e0112b.png){width=200px}
