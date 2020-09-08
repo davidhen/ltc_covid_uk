@@ -23,7 +23,7 @@ Raw code can be downloaded by selecting the `Download Rmd` option from the `Code
 
 R packages and helper functions....
 
-```{r, message=FALSE, warning=FALSE}
+```{r}
 library(tidyverse)
 library(curl)
 library(readxl)
@@ -51,8 +51,6 @@ theme_set(theme_minimal(base_family = "Roboto", base_size = 20) +
 #global options for scientific numbers and significant digits.          
 options(scipen = 10,
         digits = 1)
-#Set base directory
-set_here(verbose = FALSE)
 ```
 
 
@@ -71,9 +69,11 @@ The data used to create this plot is derived from information from the relevant 
 uk <- feather::read_feather(here("derived_data/uk.feather"))
 ```
 
-## Plot all care homes
+## Plot care homes {.tabset}
 
-Note this plot shows the distribution of all adult care homes in each country, not care homes for older people.
+### Plot all care homes
+
+This plot shows the distribution of all adult care homes in each country, not care homes for older people.
 
 ```{r}
 uk %>% 
@@ -94,6 +94,39 @@ fig_1
 
 ```{r, echo=FALSE, eval=FALSE}
 ggsave(here("plots/fig_1.png"), fig_1, width = 12, height = 9, dpi = 300)
+```
+
+### Plot older people's care homes
+
+This plot shows the distribution when filtering for older people's care homes only. We can't include Wales in this plot as we can't filter between care home types. See the table below for more info.
+
+```{r}
+uk %>% 
+  filter(country != "Wales") %>% 
+  filter(case_when(
+    country == "England" ~ `Service user band - Older People` == "Y",
+    country == "Scotland" ~ Subtype %in% c("Older People", "Respite Care and Short Breaks"),
+    country == "Northern Ireland" ~ str_detect(`Categories of Care`, "I") | 
+      str_detect(`Categories of Care`, "DE") 
+  )) %>%
+  ggplot(aes(fct_rev(country), `Care homes beds`, colour = country)) +
+  geom_violin(alpha = 0.5) +
+  geom_boxplot(width = 0.2) +
+  scale_colour_wsj() +
+  theme(legend.position = "none",
+        plot.caption = element_text(size = 12)) +
+  coord_flip() +
+  labs(title = "Distribution of care home size",
+       subtitle = "(care homes for older adults)",
+       x = "",
+       y = "Number of care home beds",
+       caption = "Outer line indicates distribution\nStrong vertical line in box indicates the median\nBox limits indicate 25th and 75th percentile\nDots indicate statistical outliers\nSources: Care Quality Commission England, Care Inspectorate Scotland,\n Regulation and Quality Improvement Authority Northern Ireland, and the Care Inspectorate Wales\nCode:https://github.com/davidhen/ltc_covid_uk") -> fig_1a
+fig_1a
+  
+```
+
+```{r, echo=FALSE, eval=FALSE}
+ggsave(here("plots/fig_1a.png"), fig_1a, width = 12, height = 9, dpi = 300)
 ```
 
 

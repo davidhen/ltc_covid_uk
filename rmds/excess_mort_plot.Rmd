@@ -53,8 +53,6 @@ theme_set(theme_minimal(base_family = "Roboto", base_size = 20) +
 #global options for scientific numbers and significant digits.          
 options(scipen = 10,
         digits = 1)
-#Set base directory
-set_here(verbose = FALSE)
 ```
 
 

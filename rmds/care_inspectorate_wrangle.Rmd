@@ -44,8 +44,6 @@ my_datatable <- function(x){
   DT::datatable(x, extensions = "Buttons", options = list(dom = "Bfrtip", 
                                                           buttons = c("csv")))
 }
-#Set base directory
-set_here(verbose = FALSE)
 ```
 
 
