@@ -4,7 +4,7 @@ author: "David Henderson"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 ---
 
-```{r setup, include=FALSE}
+```{r setup, echo=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
                       fig.width = 12, fig.height = 9,
                       warning = FALSE, message = FALSE,
@@ -419,6 +419,7 @@ uk %>%
 ```
 
 
+
 ## By location and week {.tabset}
 
 Finally, weekly change by location and country.
@@ -444,6 +445,7 @@ fig_uk_excess_1 <-
        #caption = "Source: ONS & NRS\nCode:https://github.com/davidhen/ltc_covid_uk/blob/master/excess_mort_plot.Rmd")
 fig_uk_excess_1
 ```
+
 
 
 ### Table
